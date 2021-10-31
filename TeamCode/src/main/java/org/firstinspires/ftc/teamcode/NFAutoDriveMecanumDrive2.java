@@ -27,21 +27,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-//package org.firstinspires.ftc.robotcontroller.external.samples;
 package org.firstinspires.ftc.teamcode;
-
-import android.graphics.Path;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
-
-//import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -71,7 +64,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  */
 
 
-@Autonomous(name="Autonomous: NFAutoDriveMecanumDrive2", group="Autonomus")
+@Autonomous(name="Autonomous: NFAutoDriveMecanumDrive2", group="Autonomous")
 //@Disabled
 public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
 
@@ -86,19 +79,19 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         B_LEFT_DIG,
         CLOCK_WISE_TURN,
         ANTI_CLOCK_WISE_TURN
-    };
+    }
 
     /* Declare OpMode members. */
     //HardwarePushbot robot   = new HardwarePushbot();   // Use a Pushbot's hardware
-    private ElapsedTime runtime = new ElapsedTime();
+    private final ElapsedTime runtime = new ElapsedTime();
 
     //Encoder produced TICK COUNTS per revolution
     static final double COUNTS_PER_MOTOR_REV = 537.7;    // eg: TETRIX Motor Encoder - 1440, REV Hex Motors: 2240
-    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double DRIVE_GEAR_REDUCTION = 1; //2.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 3.7;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1428);
-    static final double PROG_RUN_TYPE = 1; // 1 - myEncoderDrive, 2 - driveRobotEncoder
+    static final int TEST_RUN_TYPE = 1;
     //static final double     DRIVE_SPEED             = 1;
     //static final double     TURN_SPEED              = 0.5;
 
@@ -153,39 +146,19 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
 
         if (isStopRequested()) return;
 
-        if (PROG_RUN_TYPE == 1) {
-            //Moving Foward for 24 inches or max for 1000ms (0.75 speed)
-            myEncoderDrive(Direction.FORWARD, 0.75, 24, 1000);
-            myEncoderDrive(Direction.LEFT, 0.75, 12, 1000);
-            myEncoderDrive(Direction.BACKWARD, 0.75, 24, 1000);
-            myEncoderDrive(Direction.RIGHT, 0.75, 12, 1000);
-            myEncoderDrive(Direction.F_RIGHT_DIG, 0.75, 27, 1000);
-            myEncoderDrive(Direction.B_LEFT_DIG, 0.75, 27, 1000 );
-            // Comment out until Back Left Diagonal is ready
-        } else {
-
-            // Move Forward for 24 inches / max of 1000ms
-            driveRobotEncoder(0, 1, 0, 24, 24, 1000);
-            //Drive Right for 12 inches / max of 1000ms
-            driveRobotEncoder(1, 0, 0, 12, 12, 1000);
-            //Drive Backward for 24 inches / max of 1000ms
-            driveRobotEncoder(0, -1, 0, 24, 24, 1000);
-            //Drive Left for 12 inches / max of 1000ms
-            driveRobotEncoder(-1, 0, 0, 12, 12, 1000);
-            // Drive Forward Right Diagonal 24 inches
-            driveRobotEncoder(1, 1, 0, 24, 24, 1000);
-            // Drive Forward Left Diagonal 24 inches
-            driveRobotEncoder(-1, 1, 0, 24, 24, 1000);
-            // Drive Backward Right Diagonal 24 inches
-            driveRobotEncoder(1, -1, 0, 24, 24, 1000);
-            // Drive Backward Left Diagonal 24 inches
-            driveRobotEncoder(-1, -1, 0, 24, 24, 1000);
-            //Move RightForwardDiagonal and Rotate
-            driveRobotEncoder(1, 1, 0, 24, 24, 1000);
-            // Rotate ClockWise for 1 sec, rotate speed 0.5
-            driveRobotEncoder(0, 0, 0.5, 24, 24, 1000); //Dist - TBD
-            // Rotate AntiClockWise for 1 sec
-            driveRobotEncoder(0, 0, -0.5, 24, 24, 1000); //Dist - TBD
+        // Test RUN Move all 10 directions
+        if (TEST_RUN_TYPE == 1) {
+            //Moving Foward for 24 inches or max for 1000ms (1 speed)
+            myEncoderDrive(Direction.FORWARD, 1, 24, 3000);
+            myEncoderDrive(Direction.RIGHT, 1, 12, 3000);
+            myEncoderDrive(Direction.BACKWARD, 1, 24, 3000);
+            myEncoderDrive(Direction.LEFT, 1, 12, 3000);
+            myEncoderDrive(Direction.F_RIGHT_DIG, 1, 24, 3000);
+            myEncoderDrive(Direction.F_LEFT_DIG, 1, 24, 3000);
+            myEncoderDrive(Direction.B_RIGHT_DIG, 1, 24, 3000);
+            myEncoderDrive(Direction.B_LEFT_DIG, 1, 24, 3000);
+            myEncoderDrive(Direction.CLOCK_WISE_TURN, 1, 100, 3000);
+            myEncoderDrive(Direction.ANTI_CLOCK_WISE_TURN, 1, 100, 3000);
         }
 
 
@@ -207,6 +180,180 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         telemetry.update();
     }
 
+    public void myEncoderDrive(Direction direction, double speed, double Inches,
+                               double timeoutS) {   //SensorsToUse sensors_2_use)
+        int newFrontLeftTarget = 0;
+        int newFrontRightTarget = 0;
+        int newBackLeftTarget = 0;
+        int newBackRightTarget = 0;
+
+        RobotLog.ii("Input", "Enter - myEncoderDrive -  speed=%f, Inches=%f, timeout=%f",
+                speed, Inches, timeoutS);
+        telemetry.addData("Path1", "Enter - myEncoderDrive -  speed=%f," +
+                " Inches=%f, timeout=%f", speed, Inches, timeoutS);
+        telemetry.update();
+
+        //Reset the encoder
+        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Ensure that the op mode is still active
+        if (opModeIsActive() && !isStopRequested()) {
+
+            // Determine new target position, and pass to motor controller
+            if (direction == Direction.FORWARD) {
+                //Go forward
+                RobotLog.ii("NFusion", "Moving FORWARD.... [%f inches]..", Inches);
+                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.BACKWARD) {
+                //Go backward
+                RobotLog.ii("NFusion", "Moving BACKWARD..... [%f inches]..", Inches);
+                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.RIGHT) {
+                //Move Right
+                RobotLog.ii("NFusion", "Moving RIGHT..... [%f inches]..", Inches);
+                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.LEFT) {
+                //Move Left
+                RobotLog.ii("NFusion", "Moving LEFT..... [%f inches]..", Inches);
+                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.F_LEFT_DIG) {
+                //Forward Left Diagonal
+                RobotLog.ii("NFusion", "Moving F_LEFT_DIG ..... [%f inches]..", Inches);
+                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.F_RIGHT_DIG) {
+                //Move Forward Right Diagonal
+                RobotLog.ii("NFusion", "Moving F_RIGHT_DIG..... [%f inches]..", Inches);
+                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.B_LEFT_DIG){
+                //Move Backward Left Diagonal
+                RobotLog.ii("NFusion", "Moving B_LEFT_DIG..... [%f inches]..", Inches);
+                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.B_RIGHT_DIG) {
+                //Backward Right Diagonal
+                RobotLog.ii("NFusion", "Moving B_RIGHT_DIG ..... [%f inches]..", Inches);
+                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.CLOCK_WISE_TURN) {
+                // Turn Clock Wise
+                RobotLog.ii("NFusion", "Turn Clockwise ..... [%f seconds]..", (timeoutS / 1000));
+                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.ANTI_CLOCK_WISE_TURN) {
+                // Turn Clock Wise
+                RobotLog.ii("NFusion", "Turn Anti-Clockwise ..... [%f seconds]..", (timeoutS/1000));
+                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+            } else {
+                // Do Not move
+                speed = 0;
+            }
+
+            motorFrontLeft.setTargetPosition(newFrontLeftTarget);
+            motorFrontRight.setTargetPosition(newFrontRightTarget);
+            motorBackLeft.setTargetPosition(newBackLeftTarget);
+            motorBackRight.setTargetPosition(newBackRightTarget);
+
+            // Turn On RUN_TO_POSITION
+            motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+
+            motorFrontLeft.setPower(Math.abs(speed));
+            motorFrontRight.setPower(Math.abs(speed));
+            motorBackLeft.setPower(Math.abs(speed));
+            motorBackRight.setPower(Math.abs(speed));
+
+            RobotLog.ii("NFusion", "Final Target   FL: %7d, FR: %7d, BL: %7d, BR: %7d",
+                    newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget);
+
+            while (opModeIsActive() &&
+                    (runtime.milliseconds() < timeoutS) &&
+                    ((motorFrontLeft.isBusy() || motorFrontRight.isBusy()) &&
+                            (motorBackLeft.isBusy() || motorBackRight.isBusy()))) {
+                // Display it for the driver.
+                RobotLog.ii("NFusion", "Current Target FL: %7d, FR: %7d, BL: %7d, BR: %7d",
+                        motorFrontLeft.getCurrentPosition(),
+                        motorFrontRight.getCurrentPosition(),
+                        motorBackLeft.getCurrentPosition(),
+                        motorBackRight.getCurrentPosition());
+
+                telemetry.addData("Path1", "Running to: FL: %7d FR: %7d BL: %7d BR: %7d",
+                        newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget);
+                telemetry.addData("Path2", "Running at: FL: %7d FR: %7d BL: %7d BR: %7d",
+                        motorFrontLeft.getCurrentPosition(),
+                        motorFrontRight.getCurrentPosition(),
+                        motorBackLeft.getCurrentPosition(),
+                        motorBackRight.getCurrentPosition());
+                telemetry.addData("Status", "Motor Status: FL: %d FR: %d BL: %d BR: %d",
+                        motorFrontLeft.isBusy(),
+                        motorFrontRight.isBusy(),
+                        motorBackLeft.isBusy(),
+                        motorBackRight.isBusy());
+                telemetry.update();
+            }
+
+            RobotLog.ii("NFusion", "Motor Encoder Status FL: %d, FR: %d, BL: %d, BR: %d",
+                    motorFrontLeft.isBusy(),
+                    motorFrontRight.isBusy(),
+                    motorBackLeft.isBusy(),
+                    motorBackRight.isBusy());
+
+            // Stop all motion;
+            motorFrontLeft.setPower(0);
+            motorFrontRight.setPower(0);
+            motorBackLeft.setPower(0);
+            motorBackRight.setPower(0);
+
+
+            // Turn off ENCODER
+            motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            //telemetry.addData("Status", "Movement Distance: %7d",
+            //        distance_traveled);
+            //telemetry.update();
+
+            sleep(3000);   // optional pause after each move
+        }
+    }
+}
+
+
+
+    /*
     public void driveRobotEncoder(double x, double y, double rx, double leftDist, double rightDist,
                                   double timeout) {
 
@@ -312,151 +459,7 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             sleep(3000); // 3 sec pause
         }
     }
-
-    public void myEncoderDrive(Direction direction, double speed, double Inches,
-                               double timeoutS) {   //SensorsToUse sensors_2_use) {
-        int newLeftTarget = 0;
-        int newRightTarget = 0;
-        int newLeftBackTarget = 0;
-        int newRightBackTarget = 0;
-        double distance_traveled = 0;
-
-        RobotLog.ii("CAL", "Enter - myEncoderDrive -  speed=%f, Inches=%f, timeout=%f",
-                speed, Inches, timeoutS);
-        telemetry.addData("Path1", "Enter - myEncoderDrive -  speed=%f," +
-                " Inches=%f, timeout=%f", speed, Inches, timeoutS);
-        telemetry.update();
-
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        //Reset the encoder
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Ensure that the op mode is still active
-        if (opModeIsActive() && !isStopRequested()) {
-
-            // Determine new target position, and pass to motor controller
-            if (direction == Direction.FORWARD) {
-                //Go forward
-                RobotLog.ii("NFusion", "Moving FORWARD.....");
-                newLeftTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newRightTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newLeftBackTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newRightBackTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-            } else if (direction == Direction.BACKWARD) {
-                //Go backward
-                RobotLog.ii("NFusion", "Moving BACKWARD.....");
-                newLeftTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newRightTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newLeftBackTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newRightBackTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-            } else if (direction == Direction.RIGHT) {
-                //Strafe Right
-                RobotLog.ii("NFusion", "Moving RIGHT.....");
-                newLeftTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newRightTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newLeftBackTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newRightBackTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-
-            } else if (direction == Direction.LEFT) {
-                //Strafe Left
-                RobotLog.ii("NFusion", "Moving LEFT.....");
-                newLeftTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newRightTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newLeftBackTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newRightBackTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-
-            } else if (direction == Direction.F_RIGHT_DIG) {
-                //Left Diagonal
-                RobotLog.ii("NFusion", "Moving F_RIGHT_DIG.....");
-                newRightTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newLeftBackTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-
-            } else if (direction == Direction.F_LEFT_DIG) {
-                //Right Diagonal
-                RobotLog.ii("NFusion", "Moving F LEFT DIG .....");
-                newLeftTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newRightBackTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-
-            } else {
-                Inches = 0;
-                newLeftTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newRightTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newLeftBackTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newRightBackTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-            }
-
-
-            motorFrontLeft.setTargetPosition(newLeftTarget);
-            motorFrontRight.setTargetPosition(newRightTarget);
-            motorBackLeft.setTargetPosition(newLeftBackTarget);
-            motorBackRight.setTargetPosition(newRightBackTarget);
-
-            // Turn On RUN_TO_POSITION
-            motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-
-            motorFrontLeft.setPower(Math.abs(speed)/2);
-            motorFrontRight.setPower(Math.abs(speed)/2);
-            motorBackLeft.setPower(Math.abs(speed)/2);
-            motorBackRight.setPower(Math.abs(speed)/2);
-
-            RobotLog.ii("NFusion", "Final Target %7d, %7d",newLeftTarget, newRightTarget);
-
-            while (opModeIsActive() &&
-                    (runtime.milliseconds() < timeoutS) &&
-                    ((motorFrontLeft.isBusy() || motorFrontRight.isBusy()) &&
-                            (motorBackLeft.isBusy() || motorBackRight.isBusy()))) {
-                // Display it for the driver.
-
-                RobotLog.ii("NFusion", "Current Target %7d, %7d, %7d, %7d ",
-                        motorFrontLeft.getCurrentPosition(),
-                        motorFrontRight.getCurrentPosition(),
-                        motorBackLeft.getCurrentPosition(),
-                        motorBackRight.getCurrentPosition());
-
-                telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
-                telemetry.addData("Path2", "Running at %7d :%7d",
-                        motorFrontLeft.getCurrentPosition(),
-                        motorFrontRight.getCurrentPosition());
-                telemetry.update();
-            }
-
-
-            // Stop all motion;
-            motorFrontLeft.setPower(0);
-            motorFrontRight.setPower(0);
-            motorBackLeft.setPower(0);
-            motorBackRight.setPower(0);
-
-            //distance_traveled = motorFrontRight.getCurrentPosition() / COUNTS_PER_INCH;
-
-            // Turn off RUN_TO_POSITION
-            motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            //telemetry.addData("Status", "Movement Distance: %7d",
-            //        distance_traveled);
-            //telemetry.update();
-
-            sleep(3000);   // optional pause after each move
-        }
-    }
-}
+*/
 
 
 /*
