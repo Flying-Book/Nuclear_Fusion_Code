@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.NFMyRobot;
+import com.qualcomm.robotcore.util.RobotLog;
 //import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 //import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
@@ -82,18 +83,21 @@ public class NFAutoDriveMecanumDrive extends LinearOpMode {
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
     //static final double     DRIVE_SPEED             = 1;
     //static final double     TURN_SPEED              = 0.3;
+    int DuckCount;
 
     @Override
     public void runOpMode() /*throws InterruptedException*/ {
         // Autonomous Driving for Blue Team's Carousel
         // Starting co-ordinate (-12, 60)
-        double x1=-12;
-        double y1=60;
+        double x1=0;
+        double y1=0;
         // Destination Co-ordinate (-50, 48)
-        double x2=-50;
-        double y2=48;
+        double x2=10;
+        double y2=10;
 
-        int DuckCount = 0;
+        DuckCount = 0;
+
+        RobotLog.ii("Input", "Enter - runOpMode -  x1,y1=(%f,%f) x2, y2 = (%f, %f)", x1, y1, x2, y2);
 
         /*
          * Initialize the drive system variables.
@@ -105,26 +109,6 @@ public class NFAutoDriveMecanumDrive extends LinearOpMode {
         telemetry.addData("Status", "Starting Autorun");    //Auto run
         telemetry.update();
 
-        // Reset Encoder
-        //robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        // Set Motor in Encoder Mode
-        //robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Send telemetry message to indicate successful Encoder reset
-        //telemetry.addData("Path0",  "Position: Front L:%7d R:%7d, Back L:%7d R:%7d",
-        //                    robot.motorFrontLeft.getCurrentPosition(),
-        //                    robot.motorFrontRight.getCurrentPosition(),
-        //                    robot.motorBackLeft.getCurrentPosition(),
-        //                    robot.motorBackRight.getCurrentPosition());
-        //telemetry.update();
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -134,14 +118,19 @@ public class NFAutoDriveMecanumDrive extends LinearOpMode {
         //        (runtime.milliseconds() < 3000)) {
 
         // Move from (x1,y1) to (x2, y2) / max of 3000ms
-        driveRobot(x2-x1, y2-y1, 0, 3000);
+        driveRobot(y1-y2, x2-x1, 0, 800);
 
         runtime.reset();
 
         DuckCount=1;
         // Every Duck takes 2+1 sec to deliver. 5 Duck - 15 sec
-        spinCarousel(2000, 1000);
-        DuckCount++;
+        //spinCarousel(2000, 1000);
+
+        spinCarousel(1200,1000);
+        spinCarousel(1200,1000);
+        spinCarousel(1200,1000);
+        spinCarousel(1200,1000);
+        spinCarousel(1200,1000);
 
         /*
         while (opModeIsActive() &&
@@ -174,15 +163,17 @@ public class NFAutoDriveMecanumDrive extends LinearOpMode {
     {
         runtime.reset();
 
-        robot.motorCarouselSpin.setPower(0.5);
+        robot.motorCarouselSpin.setPower(0.75);
         while (opModeIsActive() &&
                 runtime.milliseconds() < timeout)
         {
-            telemetry.addData("NFAuto", "Running Carousel for Duck for %f sec", timeout);
+            telemetry.addData("NFAuto", "Running Carousel for Duck for %f milisec", timeout);
             telemetry.update();
+            RobotLog.ii("NFAuto", "Number of Duck delivered: %d, timeout %f", DuckCount, timeout);
         }
         robot.motorCarouselSpin.setPower(0);
         sleep(sleeptime);
+        DuckCount++;
     }
 
 
@@ -205,24 +196,27 @@ public class NFAutoDriveMecanumDrive extends LinearOpMode {
 
         // Power calculations for direction of motor movement
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = (y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
-        double frontRightPower = (y - x - rx) / denominator;
-        double backRightPower = (y + x - rx) / denominator;
+        double frontLeftPower = (-1)*(y + x + rx) / denominator;
+        double backLeftPower = (-1)*(y - x + rx) / denominator;
+        double frontRightPower = (-1)*(y - x - rx) / denominator;
+        double backRightPower = (-1)*(y + x - rx) / denominator;
 
+        RobotLog.ii("NFRobot", "Enter - driveRobot -  x,y=(%f,%f)", x, y);
+        RobotLog.ii("NFRobot", "Power supplied: FL:%f, FR:%f, BL:%f, BR:%f",
+                frontLeftPower,frontRightPower,backLeftPower,backRightPower);
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-            robot.motorFrontLeft.setPower(frontLeftPower);
-            robot.motorBackLeft.setPower(backLeftPower);
-            robot.motorFrontRight.setPower(frontRightPower);
-            robot.motorBackRight.setPower(backRightPower);
+            robot.motorFrontLeft.setPower(frontLeftPower/2);
+            robot.motorBackLeft.setPower(backLeftPower/2);
+            robot.motorFrontRight.setPower(frontRightPower/2);
+            robot.motorBackRight.setPower(backRightPower/2);
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             // Need to check Co-ordinarte using yuforia here continue driving till it reaches
             while (opModeIsActive() &&
                     (runtime.milliseconds() < timeout)) {
                 // Display it for the driver.
-                telemetry.addData("NFRobot", "Moving robot x %d, y %d",x,y);
+                telemetry.addData("NFRobot", "Moving robot x %f, y %f",x,y);
                 telemetry.update();
             }
 

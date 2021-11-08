@@ -52,7 +52,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Manipulator drive motor:  "Arm"
  * Servo channel:  Servo to open left claw:  "leftHand"
  * Servo channel:  Servo to open right claw: "rightHand"
- * Motor channel:  Carousel Spin: "motorCarouselSpin"
+ * Motor channel:  Carousel Spin: "motorCarousel"
  */
 
 public class NFMyRobot
@@ -63,9 +63,9 @@ public class NFMyRobot
     public DcMotor  motorBackLeft  = null;
     public DcMotor  motorBackRight  = null;
     public DcMotor  motorCarouselSpin  = null;
-    public DcMotor  robotArm     = null;
-    public Servo    leftClaw    = null;
-    public Servo    rightClaw   = null;
+    //public DcMotor  robotArm     = null;
+    //public Servo    leftClaw    = null;
+    //public Servo    rightClaw   = null;
 
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
@@ -91,8 +91,8 @@ public class NFMyRobot
         motorFrontRight = hwMap.dcMotor.get("motorFrontRight");
         motorBackLeft = hwMap.dcMotor.get("motorBackLeft");
         motorBackRight = hwMap.dcMotor.get("motorBackRight");
-        robotArm    = hwMap.dcMotor.get("Arm");
-        motorCarouselSpin = hwMap.dcMotor.get("motorCarouselSpin");
+        //robotArm    = hwMap.dcMotor.get("Arm");
+        motorCarouselSpin = hwMap.dcMotor.get("motorCarousel");
 
         // Reverse the right side motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -103,8 +103,8 @@ public class NFMyRobot
         motorFrontRight.setPower(0);
         motorBackLeft.setPower(0);
         motorBackRight.setPower(0);
-        robotArm.setPower(0);
-        motorCarouselSpin.setPower(0);
+        //robotArm.setPower(0);
+        //motorCarouselSpin.setPower(0);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -114,10 +114,10 @@ public class NFMyRobot
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // Define and initialize ALL installed servos.
-        leftClaw  = hwMap.servo.get("leftHand");
-        rightClaw = hwMap.servo.get("rightHand");
-        leftClaw.setPosition(MID_SERVO);
-        rightClaw.setPosition(MID_SERVO);
+        //leftClaw  = hwMap.servo.get("leftHand");
+        //rightClaw = hwMap.servo.get("rightHand");
+        //leftClaw.setPosition(MID_SERVO);
+        //rightClaw.setPosition(MID_SERVO);
     }
  }
 

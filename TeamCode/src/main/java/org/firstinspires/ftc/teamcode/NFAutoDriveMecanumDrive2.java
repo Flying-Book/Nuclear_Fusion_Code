@@ -91,6 +91,7 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
     static final double WHEEL_DIAMETER_INCHES = 3.7;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1428);
+    static final double COUNTS_FULL_TURN = 72;
     static final int TEST_RUN_TYPE = 1;
     //static final double     DRIVE_SPEED             = 1;
     //static final double     TURN_SPEED              = 0.5;
@@ -149,16 +150,16 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         // Test RUN Move all 10 directions
         if (TEST_RUN_TYPE == 1) {
             //Moving Foward for 24 inches or max for 1000ms (1 speed)
-            myEncoderDrive(Direction.FORWARD, 0.5, 24, 3000);
-            myEncoderDrive(Direction.RIGHT, 0.5, 12, 3000);
-            myEncoderDrive(Direction.BACKWARD, 0.5, 24, 3000);
-            myEncoderDrive(Direction.LEFT, 0.5, 12, 3000);
-            myEncoderDrive(Direction.CLOCK_WISE_TURN, 0.5, 240, 3000);
-            myEncoderDrive(Direction.ANTI_CLOCK_WISE_TURN, 0.5, 240, 3000);
-            myEncoderDrive(Direction.F_RIGHT_DIG, 0.5, 24, 3000);
-            myEncoderDrive(Direction.F_LEFT_DIG, 0.5, 24, 3000);
-            myEncoderDrive(Direction.B_RIGHT_DIG, 0.5, 24, 3000);
-            myEncoderDrive(Direction.B_LEFT_DIG, 0.5, 24, 3000);
+            //myEncoderDrive(Direction.FORWARD, 0.75, 24, 1000);
+            //myEncoderDrive(Direction.RIGHT, 0.75, 12, 1000);
+            //myEncoderDrive(Direction.BACKWARD, 0.75, 24, 1000);
+            //myEncoderDrive(Direction.LEFT, 0.75, 12, 1000);
+            myEncoderTurn(Direction.CLOCK_WISE_TURN, 0.4, 180);
+            //myEncoderTurn(Direction.ANTI_CLOCK_WISE_TURN, 0.4, 360);
+            //myEncoderDrive(Direction.F_RIGHT_DIG, 0.75, 24, 1000);
+            //myEncoderDrive(Direction.F_LEFT_DIG, 0.75, 24, 1000);
+            //myEncoderDrive(Direction.B_RIGHT_DIG, 0.75, 24, 1000);
+            //myEncoderDrive(Direction.B_LEFT_DIG, 0.75, 24, 1000);
         }
 
 
@@ -178,6 +179,15 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+    }
+
+    public void myEncoderTurn(Direction direction, double speed, double degree)
+    {
+        double inch_cnt = degree*(COUNTS_FULL_TURN/360);
+
+        RobotLog.ii("Input:myEncoderTurn", "Speed/Degree/inch_cnt, %f, %f %f",
+                    speed, degree, inch_cnt);
+        myEncoderDrive(direction, speed, inch_cnt, 5000);
     }
 
     public void myEncoderDrive(Direction direction, double speed, double Inches,
