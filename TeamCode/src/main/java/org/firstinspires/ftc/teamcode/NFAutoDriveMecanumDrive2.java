@@ -159,11 +159,11 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         if (TEST_RUN_TYPE == 1) { // BLUE near Storage, x-ve, y+ve
             //Starting Co-ordinate (-12,62) Move to (-12, 50)
             //Moving Foward for 12 inches or max for 1000ms (1 speed)
-            myEncoderDrive(Direction.FORWARD, 0.50, 12, 1000);
+            myEncoderDrive(Direction.FORWARD, 0.75, 12, 1000);
             // Move 60+ degree Anti-CLOCKWISE
-            myEncoderTurn(0.4, 80);
+            myEncoderTurn(0.4, 60);
             // Start (-12, 50) Destination (-60, 60). Distance: sqrt((-60+12)^2 + (60-50)^2)
-            distance = Math.sqrt((-60+12)*(-60+12) + (60-50)*(60-50)) + 2; //49.3
+            distance = Math.sqrt((-60+12)*(-60+12) + (60-50)*(60-50))+3; //49.3
             // Move backwards
             myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
 
@@ -172,7 +172,7 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             spinCarousel(1200,1000);
             spinCarousel(1200,1000);
 
-            //moveRobot(-12,0,24, 24, 0, 90);
+            //moveRobot(0,0,24, 24, 0, 90);
 
             //myEncoderDrive(Direction.LEFT, 0.75, 12, 1000);
             //myEncoderTurn(0.4, 180);

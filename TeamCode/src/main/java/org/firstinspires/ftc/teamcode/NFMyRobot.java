@@ -64,8 +64,9 @@ public class NFMyRobot
     public DcMotor  motorBackRight  = null;
     public DcMotor  motorCarouselSpin  = null;
     //public DcMotor  robotArm     = null;
-    //public Servo    leftClaw    = null;
-    //public Servo    rightClaw   = null;
+    public Servo    servo_1    = null;
+    public Servo    servo_2   = null;
+    public Servo    servo_3    = null;
 
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
@@ -93,6 +94,10 @@ public class NFMyRobot
         motorBackRight = hwMap.dcMotor.get("motorBackRight");
         //robotArm    = hwMap.dcMotor.get("Arm");
         motorCarouselSpin = hwMap.dcMotor.get("motorCarousel");
+        servo_1 = hwMap.servo.get("left_hand");
+        servo_2 = hwMap.servo.get("right_hand");
+        //servo_3 = hwMap.servo.get(Servo.class, "thumb");
+
 
         // Reverse the right side motors
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);

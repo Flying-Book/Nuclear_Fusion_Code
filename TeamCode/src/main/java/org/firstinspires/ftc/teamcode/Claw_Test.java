@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.NFMyRobot;
 
 /**
  * This OpMode scans a single servo back and forwards until Stop is pressed.
@@ -51,15 +52,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class Claw_Test extends LinearOpMode {
 
+    /* Declare OpMode members. */
+    NFMyRobot robot   = new NFMyRobot();   // Use NF my Robot h/w
+
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational position
     static final double MIN_POS     =  0.0;     // Minimum rotational position
 
     // Define class members
-    Servo   servo_1;
-    Servo   servo_2;
-    Servo   servo_3;
+    ///Servo   servo_1;
+    //Servo   servo_2;
+    //Servo   servo_3;
     double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
     boolean rampUp = true;
 
@@ -67,11 +71,17 @@ public class Claw_Test extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        /*
+         * Initialize the drive system variables.
+         * The init() method of the hardware class does all the work here
+         */
+        robot.init(hardwareMap);
+
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo_1 = hardwareMap.get(Servo.class, "left_hand");
-        servo_2 = hardwareMap.get(Servo.class, "right_hand");
-        servo_3 = hardwareMap.get(Servo.class, "thumb");
+        //servo_1 = hardwareMap.get(Servo.class, "left_hand");
+        //servo_2 = hardwareMap.get(Servo.class, "right_hand");
+        //servo_3 = hardwareMap.get(Servo.class, "thumb");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -106,9 +116,9 @@ public class Claw_Test extends LinearOpMode {
             telemetry.update();
 
             // Set the servo to the new position and pause;
-            servo_1.setPosition(position);
-            servo_2.setPosition(position);
-            servo_3.setPosition(position);
+            robot.servo_1.setPosition(position);
+            robot.servo_2.setPosition(position);
+            //robot.servo_3.setPosition(position);
             sleep(CYCLE_MS);
             idle();
         }
