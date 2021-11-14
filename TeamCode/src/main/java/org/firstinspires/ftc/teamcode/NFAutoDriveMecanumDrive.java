@@ -88,12 +88,12 @@ public class NFAutoDriveMecanumDrive extends LinearOpMode {
     @Override
     public void runOpMode() /*throws InterruptedException*/ {
         // Autonomous Driving for Blue Team's Carousel
-        // Starting co-ordinate (-12, 60)
-        double x1=0;
-        double y1=0;
-        // Destination Co-ordinate (-50, 48)
-        double x2=10;
-        double y2=10;
+        // Starting co-ordinate (-12, 62)
+        double x1=-12;
+        double y1=64;
+        // Destination Co-ordinate (-60, 60)
+        double x2=-60;
+        double y2=60;
 
         DuckCount = 0;
 

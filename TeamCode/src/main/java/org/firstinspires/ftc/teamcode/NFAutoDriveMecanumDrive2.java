@@ -35,6 +35,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
+import org.firstinspires.ftc.teamcode.NFMyRobot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -82,7 +83,8 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
     }
 
     /* Declare OpMode members. */
-    //HardwarePushbot robot   = new HardwarePushbot();   // Use a Pushbot's hardware
+    NFMyRobot robot   = new NFMyRobot();   // Use NF my Robot h/w
+
     private final ElapsedTime runtime = new ElapsedTime();
 
     //Encoder produced TICK COUNTS per revolution
@@ -92,32 +94,38 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1428);
     static final double COUNTS_FULL_TURN = 72;
+    static final int ENCODER_COUNT_BEFORE_STOP = 100;
     static final int TEST_RUN_TYPE = 1;
     //static final double     DRIVE_SPEED             = 1;
     //static final double     TURN_SPEED              = 0.5;
 
     // Declare our motors
     // Make sure your ID's match your configuration
-    DcMotor motorFrontLeft = null;
-    DcMotor motorBackLeft = null;
-    DcMotor motorFrontRight = null;
-    DcMotor motorBackRight = null;
+    //DcMotor motorFrontLeft = null;
+    //DcMotor motorBackLeft = null;
+    //DcMotor motorFrontRight = null;
+    //DcMotor motorBackRight = null;
+
+    int DuckCount;
+    double distance;
 
     @Override
     public void runOpMode() /*throws InterruptedException*/ {
 
+        distance = 0;
+        DuckCount = 0;
         /*
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        //robot.init(hardwareMap);
-        //runtime.reset();
+        robot.init(hardwareMap);
+        runtime.reset();
 
 
-        motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
-        motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
-        motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
-        motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
+        //motorFrontLeft = hardwareMap.dcMotor.get("motorFrontLeft");
+        //motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
+        //motorBackLeft = hardwareMap.dcMotor.get("motorBackLeft");
+        //motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
 
 
         // Send telemetry message to signify robot waiting;
@@ -125,22 +133,22 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         telemetry.update();
 
         // Reset Encoder
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Position: Front L:%7d R:%7d, Back L:%7d R:%7d",
-                motorFrontLeft.getCurrentPosition(),
-                motorFrontRight.getCurrentPosition(),
-                motorBackLeft.getCurrentPosition(),
-                motorBackRight.getCurrentPosition());
+                robot.motorFrontLeft.getCurrentPosition(),
+                robot.motorFrontRight.getCurrentPosition(),
+                robot.motorBackLeft.getCurrentPosition(),
+                robot.motorBackRight.getCurrentPosition());
         telemetry.update();
 
         // Reverse the right side motors
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        robot.motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -148,13 +156,27 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         if (isStopRequested()) return;
 
         // Test RUN Move all 10 directions
-        if (TEST_RUN_TYPE == 1) {
-            //Moving Foward for 24 inches or max for 1000ms (1 speed)
-            //myEncoderDrive(Direction.FORWARD, 0.75, 24, 1000);
-            //myEncoderDrive(Direction.RIGHT, 0.75, 12, 1000);
-            //myEncoderDrive(Direction.BACKWARD, 0.75, 24, 1000);
+        if (TEST_RUN_TYPE == 1) { // BLUE near Storage, x-ve, y+ve
+            //Starting Co-ordinate (-12,62) Move to (-12, 50)
+            //Moving Foward for 12 inches or max for 1000ms (1 speed)
+            myEncoderDrive(Direction.FORWARD, 0.75, 12, 1000);
+            // Move 60+ degree Anti-CLOCKWISE
+            myEncoderTurn(0.4, 60);
+            // Start (-12, 50) Destination (-60, 60). Distance: sqrt((-60+12)^2 + (60-50)^2)
+            distance = Math.sqrt((-60+12)^2 + (60-50)^2); //49.3
+            // Move backwards
+            myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
+
+            // Spin Carousel for 3 Ducks
+            spinCarousel(1200,1000);
+            spinCarousel(1200,1000);
+            spinCarousel(1200,1000);
+
+            //moveRobot(0,0,24, 24, 0, 90);
+
             //myEncoderDrive(Direction.LEFT, 0.75, 12, 1000);
-            myEncoderTurn(Direction.CLOCK_WISE_TURN, 0.4, 180);
+            //myEncoderTurn(0.4, 180);
+            //myEncoderTurn(0.7,-180);
             //myEncoderTurn(Direction.ANTI_CLOCK_WISE_TURN, 0.4, 360);
             //myEncoderDrive(Direction.F_RIGHT_DIG, 0.75, 24, 1000);
             //myEncoderDrive(Direction.F_LEFT_DIG, 0.75, 24, 1000);
@@ -181,13 +203,55 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         telemetry.update();
     }
 
-    public void myEncoderTurn(Direction direction, double speed, double degree)
+    public void moveRobot(double x1, double y1, double x2, double y2, double currOrient, double newOrient)
+    {
+        double angle = 0;
+
+        angle = Math.atan2((y2-y1),(x2-x1));
+        angle = Math.toDegrees(angle);
+
+        RobotLog.ii("NFAuto:moveRobot", "Input - Source (%f, %f, %f)" +
+                "Destination (%f, %f, %f), Angle: %f", x1, y1, currOrient, x2, y2,newOrient, angle);
+
+        // Move 60+ degree Anti-CLOCKWISE
+        myEncoderTurn(0.4, angle-currOrient);
+        // Start (-12, 50) Destination (-60, 60). Distance: sqrt((-60+12)^2 + (60-50)^2)
+        distance = (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1);
+        distance = Math.sqrt(distance);
+        // Move backwards
+        myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
+        myEncoderTurn(0.4, newOrient - angle);
+    }
+
+    // Run Carousel
+    public void spinCarousel(double timeout, long sleeptime)
+    {
+        runtime.reset();
+
+        robot.motorCarouselSpin.setPower(0.75);
+        while (opModeIsActive() &&
+                runtime.milliseconds() < timeout)
+        {
+            telemetry.addData("NFAuto", "Running Carousel for Duck for %f milisec", timeout);
+            telemetry.update();
+            RobotLog.ii("NFAuto", "Number of Duck delivered: %d, timeout %f", DuckCount, timeout);
+        }
+        robot.motorCarouselSpin.setPower(0);
+        sleep(sleeptime);
+        DuckCount++;
+    }
+
+    public void myEncoderTurn(double speed, double degree)
     {
         double inch_cnt = degree*(COUNTS_FULL_TURN/360);
 
         RobotLog.ii("Input:myEncoderTurn", "Speed/Degree/inch_cnt, %f, %f %f",
                     speed, degree, inch_cnt);
-        myEncoderDrive(direction, speed, inch_cnt, 5000);
+        if (degree >= 0) {
+            myEncoderDrive(Direction.ANTI_CLOCK_WISE_TURN, speed, inch_cnt, 5000);
+        } else {
+            myEncoderDrive(Direction.CLOCK_WISE_TURN, speed, inch_cnt, 5000);
+        }
     }
 
     public void myEncoderDrive(Direction direction, double speed, double Inches,
@@ -196,6 +260,7 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         int newFrontRightTarget = 0;
         int newBackLeftTarget = 0;
         int newBackRightTarget = 0;
+        int remainingDistance = 0;
 
         RobotLog.ii("Input", "Enter - myEncoderDrive -  speed=%f, Inches=%f, timeout=%f",
                 speed, Inches, timeoutS);
@@ -204,15 +269,15 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         telemetry.update();
 
         //Reset the encoder
-        motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Ensure that the op mode is still active
         if (opModeIsActive() && !isStopRequested()) {
@@ -221,116 +286,129 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             if (direction == Direction.BACKWARD) {
                 //Go forward
                 RobotLog.ii("NFusion", "Moving BACKWARD.... [%f inches]..", Inches);
-                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontLeftTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = robot.motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = robot.motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackRightTarget = robot.motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
             } else if (direction == Direction.FORWARD) {
                 //Go backward
                 RobotLog.ii("NFusion", "Moving FORWARD..... [%f inches]..", Inches);
-                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontLeftTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = robot.motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = robot.motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackRightTarget = robot.motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
             } else if (direction == Direction.LEFT) {
                 //Move Right
                 RobotLog.ii("NFusion", "Moving LEFT..... [%f inches]..", Inches);
-                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontLeftTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = robot.motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = robot.motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackRightTarget = robot.motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
             } else if (direction == Direction.RIGHT) {
                 //Move Left
                 RobotLog.ii("NFusion", "Moving RIGHT..... [%f inches]..", Inches);
-                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontLeftTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = robot.motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = robot.motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackRightTarget = robot.motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
             } else if (direction == Direction.F_RIGHT_DIG) {
                 //Forward Left Diagonal
                 RobotLog.ii("NFusion", "Moving F_RIGHT_DIG ..... [%f inches]..", Inches);
-                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = robot.motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = robot.motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
             } else if (direction == Direction.F_LEFT_DIG) {
                 //Move Forward Right Diagonal
                 RobotLog.ii("NFusion", "Moving F_LEFT_DIG..... [%f inches]..", Inches);
-                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontLeftTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackRightTarget = robot.motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
             } else if (direction == Direction.B_RIGHT_DIG){
                 //Move Backward Left Diagonal
                 RobotLog.ii("NFusion", "Moving B_RIGHT_DIG..... [%f inches]..", Inches);
-                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontLeftTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackRightTarget = robot.motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
             } else if (direction == Direction.B_LEFT_DIG) {
                 //Backward Right Diagonal
                 RobotLog.ii("NFusion", "Moving B_LEFT_DIG ..... [%f inches]..", Inches);
-                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = robot.motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = robot.motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+            } else if (direction == Direction.ANTI_CLOCK_WISE_TURN) {
+                // Turn Clock Wise
+                RobotLog.ii("NFusion", "Turn Anti Clockwise ..... [%f ms]..", timeoutS);
+                newFrontLeftTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = robot.motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = robot.motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackRightTarget = robot.motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
             } else if (direction == Direction.CLOCK_WISE_TURN) {
                 // Turn Clock Wise
                 RobotLog.ii("NFusion", "Turn Clockwise ..... [%f ms]..", timeoutS);
-                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-            } else if (direction == Direction.ANTI_CLOCK_WISE_TURN) {
-                // Turn Clock Wise
-                RobotLog.ii("NFusion", "Turn Anti-Clockwise ..... [%f ms]..", timeoutS);
-                newFrontLeftTarget = motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newFrontRightTarget = motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
-                newBackLeftTarget = motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
-                newBackRightTarget = motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newFrontLeftTarget = robot.motorFrontLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newFrontRightTarget = robot.motorFrontRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
+                newBackLeftTarget = robot.motorBackLeft.getCurrentPosition() + (int) (-1 * Inches * COUNTS_PER_INCH);
+                newBackRightTarget = robot.motorBackRight.getCurrentPosition() + (int) (Inches * COUNTS_PER_INCH);
             } else {
                 // Do Not move
                 speed = 0;
             }
 
-            motorFrontLeft.setTargetPosition(newFrontLeftTarget);
-            motorFrontRight.setTargetPosition(newFrontRightTarget);
-            motorBackLeft.setTargetPosition(newBackLeftTarget);
-            motorBackRight.setTargetPosition(newBackRightTarget);
+            robot.motorFrontLeft.setTargetPosition(newFrontLeftTarget);
+            robot.motorFrontRight.setTargetPosition(newFrontRightTarget);
+            robot.motorBackLeft.setTargetPosition(newBackLeftTarget);
+            robot.motorBackRight.setTargetPosition(newBackRightTarget);
 
             // Turn On RUN_TO_POSITION
-            motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
 
-            motorFrontLeft.setPower(Math.abs(speed));
-            motorFrontRight.setPower(Math.abs(speed));
-            motorBackLeft.setPower(Math.abs(speed));
-            motorBackRight.setPower(Math.abs(speed));
+            robot.motorFrontLeft.setPower(Math.abs(speed));
+            robot.motorFrontRight.setPower(Math.abs(speed));
+            robot.motorBackLeft.setPower(Math.abs(speed));
+            robot.motorBackRight.setPower(Math.abs(speed));
 
             RobotLog.ii("NFusion", "Final Target   FL: %7d, FR: %7d, BL: %7d, BR: %7d",
                     newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget);
 
             while (opModeIsActive() &&
                     (runtime.milliseconds() < timeoutS) &&
-                    ((motorFrontLeft.isBusy() || motorFrontRight.isBusy()) &&
-                            (motorBackLeft.isBusy() || motorBackRight.isBusy()))) {
+                    ((robot.motorFrontLeft.isBusy() || robot.motorFrontRight.isBusy()) &&
+                            (robot.motorBackLeft.isBusy() || robot.motorBackRight.isBusy()))) {
                 // Display it for the driver.
                 RobotLog.ii("NFusion", "Current Target FL: %7d, FR: %7d, BL: %7d, BR: %7d",
-                        motorFrontLeft.getCurrentPosition(),
-                        motorFrontRight.getCurrentPosition(),
-                        motorBackLeft.getCurrentPosition(),
-                        motorBackRight.getCurrentPosition());
+                        robot.motorFrontLeft.getCurrentPosition(),
+                        robot.motorFrontRight.getCurrentPosition(),
+                        robot.motorBackLeft.getCurrentPosition(),
+                        robot.motorBackRight.getCurrentPosition());
 
                 telemetry.addData("Path1", "Running to: FL: %7d FR: %7d BL: %7d BR: %7d",
                         newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget);
                 telemetry.addData("Path2", "Running at: FL: %7d FR: %7d BL: %7d BR: %7d",
-                        motorFrontLeft.getCurrentPosition(),
-                        motorFrontRight.getCurrentPosition(),
-                        motorBackLeft.getCurrentPosition(),
-                        motorBackRight.getCurrentPosition());
+                        robot.motorFrontLeft.getCurrentPosition(),
+                        robot.motorFrontRight.getCurrentPosition(),
+                        robot.motorBackLeft.getCurrentPosition(),
+                        robot.motorBackRight.getCurrentPosition());
                 //telemetry.addData("Status", "Motor Status: FL: %d FR: %d BL: %d BR: %d",
                   //      motorFrontLeft.isBusy(),
                   //      motorFrontRight.isBusy(),
                   //      motorBackLeft.isBusy(),
                   //      motorBackRight.isBusy());
                 telemetry.update();
+
+                // Reduce the Speed before stopping
+                remainingDistance = Math.abs(newFrontLeftTarget-robot.motorFrontLeft.getCurrentPosition());
+                if (remainingDistance < 10)
+                {
+                    remainingDistance = Math.abs(newFrontRightTarget-robot.motorFrontRight.getCurrentPosition());
+                }
+                if ((remainingDistance < ENCODER_COUNT_BEFORE_STOP) && (remainingDistance >= 10)){
+                    robot.motorFrontLeft.setPower(Math.abs(speed)*(remainingDistance/ENCODER_COUNT_BEFORE_STOP));
+                    robot.motorFrontRight.setPower(Math.abs(speed)*(remainingDistance/ENCODER_COUNT_BEFORE_STOP));
+                    robot.motorBackLeft.setPower(Math.abs(speed)*(remainingDistance/ENCODER_COUNT_BEFORE_STOP));
+                    robot.motorBackRight.setPower(Math.abs(speed)*(remainingDistance/ENCODER_COUNT_BEFORE_STOP));
+                }
             }
 
             //RobotLog.ii("NFusion", "Motor Encoder Status FL: %d, FR: %d, BL: %d, BR: %d",
@@ -340,23 +418,23 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
                     //motorBackRight.isBusy());
 
             // Stop all motion;
-            motorFrontLeft.setPower(0);
-            motorFrontRight.setPower(0);
-            motorBackLeft.setPower(0);
-            motorBackRight.setPower(0);
+            robot.motorFrontLeft.setPower(0);
+            robot.motorFrontRight.setPower(0);
+            robot.motorBackLeft.setPower(0);
+            robot.motorBackRight.setPower(0);
 
 
             // Turn off ENCODER
-            motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             //telemetry.addData("Status", "Movement Distance: %7d",
             //        distance_traveled);
             //telemetry.update();
 
-            sleep(3000);   // optional pause after each move
+            sleep(1000);   // optional pause after each move
         }
     }
 }
@@ -470,69 +548,3 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         }
     }
 */
-
-
-/*
- *  Method to perform a relative move, based on encoder counts.
- *  Encoders are not reset as the move is based on the current position.
- *  Move will stop if any of three conditions occur:
- *  1) Move gets to the desired position
- *  2) Move runs out of time
- *  3) Driver stops the opmode running.
- */
-
-    /*
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
-
-        // Ensure that the opmode is still active
-        if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = robot.leftDrive.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = robot.rightDrive.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            robot.leftDrive.setTargetPosition(newLeftTarget);
-            robot.rightDrive.setTargetPosition(newRightTarget);
-
-            // Turn On RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-            // reset the timeout time and start motion.
-            runtime.reset();
-            robot.leftDrive.setPower(Math.abs(speed));
-            robot.rightDrive.setPower(Math.abs(speed));
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
-            while (opModeIsActive() &&
-                   (runtime.seconds() < timeoutS) &&
-                   (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robot.leftDrive.getCurrentPosition(),
-                                            robot.rightDrive.getCurrentPosition());
-                telemetry.update();
-            }
-
-            // Stop all motion;
-            robot.leftDrive.setPower(0);
-            robot.rightDrive.setPower(0);
-
-            // Turn off RUN_TO_POSITION
-            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            //  sleep(250);   // optional pause after each move
-        }
-    }
-    */
