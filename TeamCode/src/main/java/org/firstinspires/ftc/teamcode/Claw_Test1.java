@@ -36,12 +36,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 /**
  * This OpMode scans a single servo back and forwards until Stop is pressed.
  * The code is structured as a LinearOpMode
- * INCREMENT sets how much to increase/decrease the servo position each cycle
+ * INCREMENT sets how much to increase/decrease the servo left_position each cycle
  * CYCLE_MS sets the update period.
  *
  * This code assumes a Servo configured with the name "left_hand" as is found on a pushbot.
  *
- * NOTE: When any servo position is set, ALL attached servos are activated, so ensure that any other
+ * NOTE: When any servo left_position is set, ALL attached servos are activated, so ensure that any other
  * connected servos are able to move freely before running this test.
  *
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
@@ -53,13 +53,14 @@ public class Claw_Test1 extends LinearOpMode {
 
     static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
+    static final double MAX_POS     =  1.0;     // Maximum rotational left_position
+    static final double MIN_POS     =  0.0;     // Minimum rotational left_position
 
     // Define class members
-    Servo   servo_1;
-    Servo   servo_2;
-    double  position = (MAX_POS - MIN_POS) / 2; // Start at halfway position
+    Servo left_servo;
+    Servo right_servo;
+    double  left_position = (MAX_POS - MIN_POS) / 4; // Start at halfway left_position
+    double  right_position = (MAX_POS - MIN_POS) / 2; // Start at halfway right_position
     //boolean rampUp = true;
     //boolean rampUp = this.gamepad1.left_trigger;
     float ltrigger;
@@ -72,8 +73,8 @@ public class Claw_Test1 extends LinearOpMode {
 
         // Connect to servo (Assume PushBot Left Hand)
         // Change the text in quotes to match any servo name on your robot.
-        servo_1 = hardwareMap.get(Servo.class, "left_hand");
-        servo_2 = hardwareMap.get(Servo.class, "right_hand");
+        left_servo = hardwareMap.get(Servo.class, "left_hand");
+        right_servo = hardwareMap.get(Servo.class, "right_hand");
 
         // Wait for the start button
         telemetry.addData(">", "Press Start to scan Servo." );
@@ -87,7 +88,7 @@ public class Claw_Test1 extends LinearOpMode {
             ltrigger = this.gamepad1.left_trigger;
             lbumper = this.gamepad1.left_bumper;
 
-         if (ltrigger > 0) {
+            if (ltrigger > 0) {
                 close = true;
             }
             else {
@@ -104,28 +105,43 @@ public class Claw_Test1 extends LinearOpMode {
             // slew the servo, according to the rampUp (direction) variable.
             if (close) {
                 // Keep stepping up until we hit the max value.
-                position += INCREMENT ;
-                if (position >= MAX_POS ) {
-                    position = MAX_POS;
+                left_position += INCREMENT ;
+                if (left_position >= MAX_POS ) {
+                    left_position = MAX_POS;
+                    //close = !close;   // Switch ramp direction
+                }
+                right_position -= INCREMENT ;
+                if (right_position <= MIN_POS ) {
+                    right_position = MIN_POS;
+                    //close = !close;   // Switch ramp direction
+                }
+
+
+            }
+
+            if (release) {
+                // Keep stepping down until we hit the min value.
+                left_position -= INCREMENT ;
+                if (left_position <= MIN_POS ) {
+                    left_position = MIN_POS;
+                    //release = !release;  // Switch ramp direction
+                }
+                right_position += INCREMENT ;
+                if (right_position >= MAX_POS ) {
+                    right_position = MAX_POS;
                     //close = !close;   // Switch ramp direction
                 }
             }
-            if (release) {
-                // Keep stepping down until we hit the min value.
-                position -= INCREMENT ;
-                if (position <= MIN_POS ) {
-                    position = MIN_POS;
-                    //release = !release;  // Switch ramp direction
-                }
-            }
+
             // Display the current value
-            telemetry.addData("Servo Position", "%5.2f", position);
+            telemetry.addData("Servo Position", "%5.2f", left_position);
+            telemetry.addData("Servo Position", "%5.2f", right_position);
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
 
-            // Set the servo to the new position and pause;
-            servo_1.setPosition(position);
-            servo_2.setPosition(position);
+            // Set the servo to the new left_position and pause;
+            left_servo.setPosition(left_position);
+            right_servo.setPosition(right_position);
             sleep(CYCLE_MS);
             idle();
         }
