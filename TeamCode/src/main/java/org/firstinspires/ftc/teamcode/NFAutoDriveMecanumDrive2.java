@@ -104,9 +104,9 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1428);
     static final double COUNTS_FULL_TURN = 72;
-    static final int ENCODER_COUNT_BEFORE_STOP = 100;
+    static final int ENCODER_COUNT_BEFORE_STOP = 140; //slow down before 3"
 
-    static TEST_MODE TEST_RUN_TYPE = TEST_MODE.TEST1;
+    static TEST_MODE TEST_RUN_TYPE = TEST_MODE.WORKING1;
 
     //static final double     DRIVE_SPEED             = 1;
     //static final double     TURN_SPEED              = 0.5;
@@ -123,7 +123,7 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
 
     @Override
     public void runOpMode() /*throws InterruptedException*/ {
-
+        Direction dir;
         distance = 0;
         DuckCount = 0;
         /*
@@ -143,13 +143,19 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        // Set Encoder
+        robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         // Send telemetry message to indicate successful Encoder reset
-        //telemetry.addData("Path0", "Position: Front L:%7d R:%7d, Back L:%7d R:%7d",
-        //        robot.motorFrontLeft.getCurrentPosition(),
-        //        robot.motorFrontRight.getCurrentPosition(),
-        //        robot.motorBackLeft.getCurrentPosition(),
-        //        robot.motorBackRight.getCurrentPosition());
-        //telemetry.update();
+        telemetry.addData("Path0", "Position: Front L:%7d R:%7d, Back L:%7d R:%7d",
+                robot.motorFrontLeft.getCurrentPosition(),
+                robot.motorFrontRight.getCurrentPosition(),
+                robot.motorBackLeft.getCurrentPosition(),
+                robot.motorBackRight.getCurrentPosition());
+        telemetry.update();
 
         // Reverse the right side motors
         robot.motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -161,41 +167,44 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         if (isStopRequested()) return;
 
         if (TEST_RUN_TYPE == TEST_MODE.WORKING1) { // BLUE near Storage, x-ve, y+ve
-            //Starting Co-ordinate (-12,62) Move to (-12, 50)
+            // Move A(-36, 64) fwd 12" B(-36, 52) turn 74 degree bkw 21.5" C(-60, 55)
+            // Deliver Duck Move to D (-60, 36)
+            //Starting Co-ordinate A (-36,64) Move to B (-36, 52)
             //Moving Foward for 12 inches or max for 1000ms (1 speed)
-            myEncoderDrive(Direction.FORWARD, 0.75, 12, 1000);
+            myEncoderDrive(Direction.FORWARD, 0.50, 12, 1000);
             // Move 60+ degree Anti-CLOCKWISE
-            myEncoderTurn(0.4, 75);
-            // Start (-12, 50) Destination (-60, 60). Distance: sqrt((-60+12)^2 + (60-50)^2)
-            distance = Math.sqrt((-60+12)*(-60+12) + (60-50)*(60-50))+3; //49.3
+            myEncoderTurn(0.4, 74);
+            // Start (-36, 52) Destination (-60, 55). Distance: sqrt((-60+36)^2 + (55-52)^2)
             // Move backwards
-            myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
-            // Spin Carousel for 3 Ducks
-            spinCarousel(1200,1000);
-            spinCarousel(1200,1000);
-            spinCarousel(1200,1000);
+            distance = Math.sqrt((-60+36)*(-60+36) + (55-52)*(55-52)); //24.1 inches
+            myEncoderDrive(Direction.BACKWARD, 0.40, 21.5, 1000);
+            // Spin Carousel for 1 Ducks
+            spinCarousel(1500,1000);
+            // Turn 16 degree to aline x-axis
+            myEncoderTurn(0.4, 90-74);
+            // Move Robot C (-60, 55) to D (-60, 36)
+            myEncoderDrive(Direction.RIGHT, 0.4, 55-36,1000);
+            RobotLog.ii("NFAuto", "11/20: Testing Working1 run1 %f", distance);
         }
 
         if (TEST_RUN_TYPE == TEST_MODE.TEST1) { // BLUE near Storage, x-ve, y+ve
-            //Starting Co-ordinate (-12,62) Move to (-12, 50)
+            // Move A(-36, 64) fwd 12" B(-36, 52) turn 74 degree bkw 21.5" C(-60, 55)
+            // Deliver Duck Move to D (-60, 36)
+            //Starting Co-ordinate A (-36,64) Move to B (-36, 52)
             //Moving Foward for 12 inches or max for 1000ms (1 speed)
-            myEncoderDrive(Direction.FORWARD, 0.75, 12, 1000);
+            myEncoderDrive(Direction.FORWARD, 0.5, 12, 1000);
             // Move 60+ degree Anti-CLOCKWISE
-            myEncoderTurn(0.4, 75);
-            // Start (-12, 50) Destination (-60, 60). Distance: sqrt((-60+12)^2 + (60-50)^2)
-            distance = Math.sqrt((-60+12)*(-60+12) + (60-50)*(60-50))+3; //49.3
-            // Move backwards
-            myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
+            //myEncoderTurn(0.4, 75);
+            // Start B (-36, 52) Destination C (-60, 55). Distance: sqrt((-60+12)^2 + (60-50)^2)
 
-            //moveRobot(-12,50,-90,-60, 60, 60);
+            dir = moveRobot(-36,52,-90,-60, 55, -7.5, 0.4);
 
-            //myEncoderDrive(Direction.FORWARD, 0.4, 3, 1000);
+            //myEncoderDrive(dir, 0.4, 3, 1000);
 
-            // Spin Carousel for 3 Ducks
-            spinCarousel(1200,1000);
-            spinCarousel(1200,1000);
-            spinCarousel(1200,1000);
+            // Spin Carousel for 1 Ducks
+            spinCarousel(1500,1000);
 
+            dir = moveRobot(-60,55,-7.5,-60, 36, 0, 0.4);
             //myEncoderDrive(Direction.LEFT, 0.75, 12, 1000);
             //myEncoderTurn(0.4, 180);
             //myEncoderTurn(0.7,-180);
@@ -225,22 +234,48 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         telemetry.update();
     }
 
-    public void moveRobot(double x1, double y1, double currOrient, double x2, double y2, double newOrient)
+    public Direction moveRobot(double x1, double y1, double currOrient,
+                               double x2, double y2, double newOrient, double speed)
     {
         double angle;
         double turn_angle;
+        Direction direction = Direction.FORWARD;
 
-        // angle will return Anti-clockwise value [-180, 180]
-        angle = Math.toDegrees(Math.atan2((x2-x1), (y2-y1)));
+        // angle will return Anti-clockwise value [-90, 90]
+        // Example A(-12,50), B(-60, 60). Angle<AB = atan2(60-50, -60-(-12)) = atan2(10,-48) = -11.77
+        // Example A(-36, 52), B(-60, 55) Angle = atan2(55-52, -60+36) = atan2(3,-24) = -7.13
+        angle = Math.toDegrees(Math.atan2((y2-y1), (x2-x1)));
         //angle = Math.toDegrees(angle);
 
         RobotLog.ii("NFAuto:moveRobot", "Input - Source (%f, %f, %f)" +
                 "Destination (%f, %f, %f), Angle: %f", x1, y1, currOrient, x2, y2,newOrient, angle);
 
-        turn_angle = angle - currOrient;
-        // Start (-12, 50) Destination (-60, 60). Distance: sqrt((-60+12)^2 + (60-50)^2)
+        turn_angle = angle - currOrient; // -7.13 + 90 = 82.87
+        // Start (-36, 52) Destination (-60, 55). Distance: sqrt((-60+36)^2 + (55-52)^2) = 24.2
         distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
 
+        // Robot is now aline with line
+        myEncoderTurn(0.4, turn_angle);
+
+        // Decide the direction to move based on the target co-ordinate.
+        if(x1>x2) {
+            // Go backward to (x2,y2)
+            direction = Direction.BACKWARD;
+        } else if (x2>x1) {
+            // Go Forward to (x2, y2)
+            direction = Direction.FORWARD;
+        } else if (y1>y2) {
+            // Go Backward to (x2, y2)
+            direction = Direction.BACKWARD;
+        } else {
+            // Go Forward to (x2, y2)
+            direction = Direction.FORWARD;
+        }
+
+        myEncoderDrive(direction, speed, distance, 1000);
+        myEncoderTurn(speed, newOrient - angle);
+
+    /*
         // Move 60+ degree Anti-CLOCKWISE
         if (turn_angle < -180) {
             turn_angle = turn_angle + 180;
@@ -258,6 +293,8 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             myEncoderDrive(Direction.FORWARD, 0.75, distance, 1000);
             myEncoderTurn(0.4, newOrient - angle);
         }
+    */
+        return direction;
     }
 
     // Run Carousel
@@ -273,17 +310,17 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             telemetry.update();
         }
         robot.motorCarouselSpin.setPower(0);
-        sleep(sleeptime);
+        //sleep(sleeptime);
         DuckCount++;
         RobotLog.ii("NFAuto", "Number of Duck delivered: %d, timeout %f", DuckCount, timeout);
     }
 
     public void myEncoderTurn(double speed, double degree)
     {
-        double inch_cnt = degree*(COUNTS_FULL_TURN/360);
+        double inch_cnt;
 
-        RobotLog.ii("Input:myEncoderTurn", "Speed/Degree/inch_cnt, %f, %f %f",
-                    speed, degree, inch_cnt);
+        if (Math.abs(degree) < 1) return;
+
         // Adjust to turn less than 180
         if (degree < -180) {
             degree = degree + 360;
@@ -291,10 +328,15 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         if (degree > 180) {
             degree = degree - 360;
         }
+
+        inch_cnt = degree*(COUNTS_FULL_TURN/360);
+        RobotLog.ii("Input:myEncoderTurn", "Speed/Degree/inch_cnt, %f, %f %f",
+                speed, degree, inch_cnt);
+
         if (degree >= 0) {
-            myEncoderDrive(Direction.ANTI_CLOCK_WISE_TURN, speed, inch_cnt, 5000);
+            myEncoderDrive(Direction.ANTI_CLOCK_WISE_TURN, speed, Math.abs(inch_cnt), 3000);
         } else {
-            myEncoderDrive(Direction.CLOCK_WISE_TURN, speed, inch_cnt, 5000);
+            myEncoderDrive(Direction.CLOCK_WISE_TURN, speed, Math.abs(inch_cnt), 3000);
         }
     }
 
@@ -306,6 +348,8 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
         int newBackRightTarget = 0;
         int remainingDistance;
         int cnt = 0;
+        double new_speed = 0;
+
 
         RobotLog.ii("Input", "Enter - myEncoderDrive -  speed=%f, Inches=%f, timeout=%f",
                 speed, Inches, timeoutS);
@@ -313,16 +357,18 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
                 " Inches=%f, timeout=%f", speed, Inches, timeoutS);
         telemetry.update();
 
-        //Reset the encoder
+        // Turn off ENCODER
+        // Reset Encoder beginning to see it gets better.
+        robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RobotLog.ii("Path0", "Starting Position: Front L:%7d R:%7d, Back L:%7d R:%7d",
+                robot.motorFrontLeft.getCurrentPosition(),
+                robot.motorFrontRight.getCurrentPosition(),
+                robot.motorBackLeft.getCurrentPosition(),
+                robot.motorBackRight.getCurrentPosition());
 
         // Ensure that the op mode is still active
         if (opModeIsActive() && !isStopRequested()) {
@@ -395,6 +441,7 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
                 speed = 0;
             }
 
+            // Set the Encoder to the target position.
             robot.motorFrontLeft.setTargetPosition(newFrontLeftTarget);
             robot.motorFrontRight.setTargetPosition(newFrontRightTarget);
             robot.motorBackLeft.setTargetPosition(newBackLeftTarget);
@@ -406,13 +453,14 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            // reset the timeout time and start motion.
-            runtime.reset();
-
+            // Set power for the motors.
             robot.motorFrontLeft.setPower(Math.abs(speed));
             robot.motorFrontRight.setPower(Math.abs(speed));
             robot.motorBackLeft.setPower(Math.abs(speed));
             robot.motorBackRight.setPower(Math.abs(speed));
+
+            // reset the timeout time and start motion.
+            runtime.reset();
 
             RobotLog.ii("NFusion", "Final Target   FL: %7d, FR: %7d, BL: %7d, BR: %7d",
                     newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget);
@@ -422,7 +470,7 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
                     ((robot.motorFrontLeft.isBusy() || robot.motorFrontRight.isBusy()) &&
                             (robot.motorBackLeft.isBusy() || robot.motorBackRight.isBusy()))) {
                 // Display it for the driver every 10 ms
-                if(runtime.milliseconds() > cnt * 10 ) {
+                if(runtime.milliseconds() > cnt * 30 ) { // Print every 30 ms
                     RobotLog.ii("NFusion", "Current Target FL: %7d, FR: %7d, BL: %7d, BR: %7d",
                             robot.motorFrontLeft.getCurrentPosition(),
                             robot.motorFrontRight.getCurrentPosition(),
@@ -445,10 +493,15 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
                     remainingDistance = Math.abs(newFrontRightTarget-robot.motorFrontRight.getCurrentPosition());
                 }
                 if ((remainingDistance < ENCODER_COUNT_BEFORE_STOP) && (remainingDistance >= 10)){
-                    robot.motorFrontLeft.setPower(Math.abs(speed)*(remainingDistance/(float)ENCODER_COUNT_BEFORE_STOP));
-                    robot.motorFrontRight.setPower(Math.abs(speed)*(remainingDistance/(float)ENCODER_COUNT_BEFORE_STOP));
-                    robot.motorBackLeft.setPower(Math.abs(speed)*(remainingDistance/(float)ENCODER_COUNT_BEFORE_STOP));
-                    robot.motorBackRight.setPower(Math.abs(speed)*(remainingDistance/(float)ENCODER_COUNT_BEFORE_STOP));
+                    new_speed = Math.abs(speed)*(remainingDistance/(float)ENCODER_COUNT_BEFORE_STOP);
+                    robot.motorFrontLeft.setPower(new_speed);
+                    robot.motorFrontRight.setPower(new_speed);
+                    robot.motorBackLeft.setPower(new_speed);
+                    robot.motorBackRight.setPower(new_speed);
+                    if((cnt % 5) == 0) { // skip 5 cnt and print
+                        RobotLog.ii("NFusion", "Remaining Dist: %7d, Speed %f, new Speed %f",
+                                remainingDistance, speed, new_speed);
+                    }
                 }
             }
 
@@ -464,18 +517,25 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             robot.motorBackLeft.setPower(0);
             robot.motorBackRight.setPower(0);
 
+            //sleep(500);   // optional pause after each move
 
             // Turn off ENCODER
-            robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            // Reset Encoder
+            //robot.motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            RobotLog.ii("Path0", "Exit - myEncoderDrive Last Position: Front L:%7d R:%7d, Back L:%7d R:%7d",
+                    robot.motorFrontLeft.getCurrentPosition(),
+                    robot.motorFrontRight.getCurrentPosition(),
+                    robot.motorBackLeft.getCurrentPosition(),
+                    robot.motorBackRight.getCurrentPosition());
 
             //telemetry.addData("Status", "Movement Distance: %7d",
             //        distance_traveled);
             //telemetry.update();
 
-            sleep(500);   // optional pause after each move
         }
     }
 }
