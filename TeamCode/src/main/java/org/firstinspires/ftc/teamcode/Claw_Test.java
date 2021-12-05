@@ -118,7 +118,7 @@ public class Claw_Test extends LinearOpMode {
             // Set the servo to the new position and pause;
             robot.servo_1.setPosition(position);
             robot.servo_2.setPosition(position);
-            //robot.servo_3.setPosition(position);
+
             sleep(CYCLE_MS);
             idle();
         }

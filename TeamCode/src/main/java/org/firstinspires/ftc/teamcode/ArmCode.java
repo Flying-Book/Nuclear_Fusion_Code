@@ -46,9 +46,8 @@ public class ArmCode extends LinearOpMode {
             motorBackRight.setPower(backRightPower);
 */
             double armPos = gamepad1.left_stick_y;
-            armPos = armPos / 2;
+            // armPos = armPos / 2;
             motorArm.setPower(armPos);
-            //motorArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         }
     }
 }

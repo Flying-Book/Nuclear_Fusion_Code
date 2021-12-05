@@ -173,21 +173,22 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             //Moving Foward for 12 inches or max for 1000ms (1 speed)
             myEncoderDrive(Direction.FORWARD, 0.50, 12, 1000);
             // Move 60+ degree Anti-CLOCKWISE
-            myEncoderTurn(0.4, 74);
+            myEncoderTurn(0.4, 70);
             // Start (-36, 52) Destination (-60, 55). Distance: sqrt((-60+36)^2 + (55-52)^2)
             // Move backwards
             distance = Math.sqrt((-60+36)*(-60+36) + (55-52)*(55-52)); //24.1 inches
-            myEncoderDrive(Direction.BACKWARD, 0.40, 21.5, 1000);
+            myEncoderDrive(Direction.BACKWARD, 0.45, 29, 1000);
             // Spin Carousel for 1 Ducks
-            spinCarousel(1500,1000);
+            spinCarousel(1600,1000);
             // Turn 16 degree to aline x-axis
-            myEncoderTurn(0.4, 90-74);
-            // Move Robot C (-60, 55) to D (-60, 36)
-            myEncoderDrive(Direction.RIGHT, 0.4, 55-36,1000);
-            RobotLog.ii("NFAuto", "11/20: Testing Working1 run1 %f", distance);
+            myEncoderTurn(0.4, 120);
+            // Move Robot C (-60, 55) to D (-60, 36) //55-36 = 19
+            myEncoderDrive(Direction.BACKWARD, 0.4, 21,1000);
+            RobotLog.ii("NFAuto", "11/20: Testing Working1 run7 %f", distance);
         }
 
         if (TEST_RUN_TYPE == TEST_MODE.TEST1) { // BLUE near Storage, x-ve, y+ve
+            RobotLog.ii("NFAuto", "11/20: Testing TEST1 run0");
             // Move A(-36, 64) fwd 12" B(-36, 52) turn 74 degree bkw 21.5" C(-60, 55)
             // Deliver Duck Move to D (-60, 36)
             //Starting Co-ordinate A (-36,64) Move to B (-36, 52)
@@ -302,7 +303,7 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
     {
         runtime.reset();
 
-        robot.motorCarouselSpin.setPower(0.75);
+        robot.motorCarouselSpin.setPower(0.80);
         while (opModeIsActive() &&
                 runtime.milliseconds() < timeout)
         {

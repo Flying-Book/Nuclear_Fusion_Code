@@ -47,7 +47,7 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name = "Concept: Spin Servo", group = "Concept")
+@TeleOp(name = "Concept: Anusha_Is_Awesome", group = "Concept")
 //@Disabled
 public class Claw_Test1 extends LinearOpMode {
 
@@ -59,7 +59,7 @@ public class Claw_Test1 extends LinearOpMode {
     // Define class members
     Servo left_servo;
     Servo right_servo;
-    double  left_position = (MAX_POS - MIN_POS) / 4; // Start at halfway left_position
+    double  left_position = (MAX_POS - MIN_POS) / 2; // Start at halfway left_position
     double  right_position = (MAX_POS - MIN_POS) / 2; // Start at halfway right_position
     //boolean rampUp = true;
     //boolean rampUp = this.gamepad1.left_trigger;
