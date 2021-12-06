@@ -171,13 +171,14 @@ public class NFAutoDriveMecanumDrive2 extends LinearOpMode {
             // Deliver Duck Move to D (-60, 36)
             //Starting Co-ordinate A (-36,64) Move to B (-36, 52)
             //Moving Foward for 12 inches or max for 1000ms (1 speed)
-            myEncoderDrive(Direction.FORWARD, 0.50, 12, 1000);
+            myEncoderDrive(Direction.FORWARD, 0.50, 25, 2000);
             // Move 60+ degree Anti-CLOCKWISE
             myEncoderTurn(0.4, 70);
             // Start (-36, 52) Destination (-60, 55). Distance: sqrt((-60+36)^2 + (55-52)^2)
             // Move backwards
             distance = Math.sqrt((-60+36)*(-60+36) + (55-52)*(55-52)); //24.1 inches
-            myEncoderDrive(Direction.BACKWARD, 0.45, 29, 1000);
+            myEncoderDrive(Direction.BACKWARD, 0.45, 40, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.2,7, 2000);
             // Spin Carousel for 1 Ducks
             spinCarousel(1600,1000);
             // Turn 16 degree to aline x-axis

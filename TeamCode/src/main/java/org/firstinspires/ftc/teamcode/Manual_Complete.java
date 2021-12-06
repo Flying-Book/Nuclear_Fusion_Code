@@ -24,6 +24,7 @@ public class Manual_Complete extends LinearOpMode
     double  right_position = (((MAX_POS - MIN_POS) / 4)*3); // Start at halfway right_position
     float ltrigger;
     boolean lbumper;
+    boolean rbumper;
     boolean close = false;
     boolean release = false;
 
@@ -38,6 +39,7 @@ public class Manual_Complete extends LinearOpMode
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("motorFrontRight");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("motorBackRight");
         DcMotor motorArm = hardwareMap.dcMotor.get("motorArm");
+        DcMotor motorCarousel = hardwareMap.dcMotor.get("motorCarousel");
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -58,6 +60,14 @@ public class Manual_Complete extends LinearOpMode
         if (isStopRequested()) return;
 
         while (opModeIsActive()) {
+
+            rbumper = gamepad2.right_bumper;
+            if (rbumper == true) {
+                motorCarousel.setPower(0.5);
+            }
+            else {
+                motorCarousel.setPower(0);
+            }
             double y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double rx = gamepad1.right_stick_x;
