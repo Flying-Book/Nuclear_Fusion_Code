@@ -149,6 +149,11 @@ public class AutoBlueForward extends LinearOpMode {
         robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.motorFrontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.motorFrontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Position: Front L:%7d R:%7d, Back L:%7d R:%7d",
                 robot.motorFrontLeft.getCurrentPosition(),
@@ -171,9 +176,12 @@ public class AutoBlueForward extends LinearOpMode {
             myEncoderDrive(Direction.RIGHT, 0.1, 1.5, 2000);
             myEncoderTurn(0.2, 5);
             myEncoderDrive(Direction.BACKWARD, 0.50, 22, 2000);
-            myEncoderDrive(Direction.BACKWARD, 0.35, 8, 2000);
-            myEncoderDrive(Direction.BACKWARD, 0.15, 1, 2000);
-            spinCarousel(1600,1000);
+            myEncoderDrive(Direction.BACKWARD, 0.35, 7, 2000);
+            spinCarousel(2000,500);
+            myEncoderDrive(Direction.FORWARD, 0.35, 8, 2000);
+            myEncoderTurn(0.2, -10);
+            myEncoderDrive(Direction.RIGHT, 0.35, 29, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.4, 12, 2000);
 
         };
 
@@ -251,7 +259,7 @@ public class AutoBlueForward extends LinearOpMode {
     {
         runtime.reset();
 
-        robot.motorCarouselSpin.setPower(0.60);
+        robot.motorCarouselSpin.setPower(0.8);
         while (opModeIsActive() &&
                 runtime.milliseconds() < timeout)
         {
