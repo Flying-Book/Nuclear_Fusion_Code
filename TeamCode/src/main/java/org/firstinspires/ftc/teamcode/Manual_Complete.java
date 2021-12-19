@@ -20,8 +20,8 @@ public class Manual_Complete extends LinearOpMode
     // Define class members
     Servo left_servo;
     Servo right_servo;
-    double  left_position = ((MAX_POS - MIN_POS)/4); // Start at halfway left_position
-    double  right_position = (((MAX_POS - MIN_POS) / 4)*3); // Start at halfway right_position
+    double  left_position = (((MAX_POS - MIN_POS)/4)*3); // Start at halfway left_position
+    double  right_position = (((MAX_POS - MIN_POS) / 4)); // Start at halfway right_position
     float ltrigger;
     boolean lbumper;
     boolean rbumper;
@@ -76,10 +76,11 @@ public class Manual_Complete extends LinearOpMode
             // This ensures all the powers maintain the same ratio, but only when
             // at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            double frontLeftPower = (y - x - rx) / denominator;
+            double backLeftPower = (y + x - rx) / denominator;
+            double frontRightPower = (y - x + rx) / denominator;
+            double backRightPower = (y + x + rx) / denominator;
+
 
             motorFrontLeft.setPower(frontLeftPower);
             motorBackLeft.setPower(backLeftPower);
@@ -88,7 +89,7 @@ public class Manual_Complete extends LinearOpMode
 
             double armPos = gamepad2.left_stick_y;
             // armPos = armPos / 2;
-            motorArm.setPower(armPos);
+            motorArm.setPower(-armPos);
 
             ltrigger = this.gamepad2.left_trigger;
             lbumper = this.gamepad2.left_bumper;
@@ -142,7 +143,6 @@ public class Manual_Complete extends LinearOpMode
             telemetry.addData("Servo Position", "%5.2f", right_position);
             telemetry.addData(">", "Press Stop to end test." );
             telemetry.update();
-
             // Set the servo to the new left_position and pause;
             left_servo.setPosition(left_position);
             right_servo.setPosition(right_position);
