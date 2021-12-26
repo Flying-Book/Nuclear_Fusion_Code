@@ -56,9 +56,9 @@ import org.firstinspires.ftc.teamcode.NFMyRobot;
  */
 
 
-@Autonomous(name="Autonomous: AutoBlueForward", group="Autonomous")
+@Autonomous(name="Autonomous: AutoRedForward", group="Autonomous")
 //@Disabled
-public class AutoBlueForward extends LinearOpMode {
+public class AutoRedForward extends LinearOpMode {
 
     public enum Direction {
         FORWARD,
@@ -167,7 +167,7 @@ public class AutoBlueForward extends LinearOpMode {
             myEncoderDrive(Direction.LEFT, 0.1, 1.5, 2000);
             myEncoderTurn(0.2, 5);
             myEncoderDrive(Direction.BACKWARD, 0.50, 22, 2000);
-            myEncoderDrive(Direction.BACKWARD, 0.35, 7, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.35, 10.5, 2000);
             spinCarousel(2000,500);
             myEncoderDrive(Direction.FORWARD, 0.35, 8, 2000);
             myEncoderTurn(0.2, -10);
@@ -250,7 +250,7 @@ public class AutoBlueForward extends LinearOpMode {
     {
         runtime.reset();
 
-        robot.motorCarouselSpin.setPower(0.8);
+        robot.motorCarouselSpin.setPower(-0.8);
         while (opModeIsActive() &&
                 runtime.milliseconds() < timeout)
         {
