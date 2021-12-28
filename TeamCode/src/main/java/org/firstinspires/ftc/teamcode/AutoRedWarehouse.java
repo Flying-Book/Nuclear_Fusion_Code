@@ -57,7 +57,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 @Autonomous(name="Autonomous: AutoRedWarehouse", group="Autonomous")
 //@Disabled
-public class AutoRedWarhouse extends LinearOpMode {
+public class AutoRedWarehouse extends LinearOpMode {
 
     public enum Direction {
         FORWARD,
