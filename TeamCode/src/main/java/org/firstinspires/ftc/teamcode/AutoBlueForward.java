@@ -181,7 +181,10 @@ public class AutoBlueForward extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
-
+    //currOrient = Current Orientation (rotation)
+    // x1 current x of robot; y1 current y of robot
+    // x2 new x of robot; y2 new y of robot (by new I mean targeted x and y)
+    // speed is just speed
     public Direction moveRobot(double x1, double y1, double currOrient,
                                double x2, double y2, double newOrient, double speed)
     {

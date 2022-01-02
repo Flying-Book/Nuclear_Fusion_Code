@@ -164,11 +164,14 @@ public class AutoBlueCarouselWarehouse extends LinearOpMode {
         if (TEST_RUN_TYPE == TEST_MODE.WORKING1)
         {
             myEncoderDrive(Direction.RIGHT, 0.1, 1.5, 2000);
-            myEncoderDrive(Direction.BACKWARD, 0.35, 29, 5000);
             myEncoderTurn(0.2, 5);
-            myEncoderDrive(Direction.FORWARD, 0.75, 29, 10000);
-            myEncoderDrive(Direction.LEFT, 0.1, 1.5, 2000);
-            myEncoderDrive(Direction.FORWARD, 0.75, 63.5, 10000);
+            myEncoderDrive(Direction.BACKWARD, 0.50, 22, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.35, 8, 2000);
+            spinCarousel(2000,500);
+            myEncoderDrive(Direction.FORWARD, 0.35, 8, 2000);
+            myEncoderTurn(0.2, -10);
+            myEncoderDrive(Direction.LEFT, 0.1, 2.75, 2000);
+            myEncoderDrive(Direction.FORWARD, 0.6                                                                             , 92.5, 10000);
             myEncoderDrive(Direction.RIGHT, 0.6, 30, 5000);
             myEncoderDrive(Direction.FORWARD, 0.5, 12, 2000);
 
@@ -249,7 +252,7 @@ public class AutoBlueCarouselWarehouse extends LinearOpMode {
     {
         runtime.reset();
 
-        robot.motorCarouselSpin.setPower(-0.8);
+        robot.motorCarouselSpin.setPower(0.66);
         while (opModeIsActive() &&
                 runtime.milliseconds() < timeout)
         {

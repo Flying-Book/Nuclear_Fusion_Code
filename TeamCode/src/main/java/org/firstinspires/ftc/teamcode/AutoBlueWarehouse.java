@@ -163,8 +163,7 @@ public class AutoBlueWarehouse extends LinearOpMode {
 
         if (TEST_RUN_TYPE == TEST_MODE.WORKING1)
         {
-            myEncoderDrive(Direction.BACKWARD, 0.35, 29, 5000);
-            myEncoderDrive(Direction.FORWARD, 0.75, 92.5, 10000);
+            myEncoderDrive(Direction.FORWARD, 0.75, 63.5, 10000);
             myEncoderDrive(Direction.RIGHT, 0.6, 30, 5000);
             myEncoderDrive(Direction.FORWARD, 0.5, 12, 2000);
 

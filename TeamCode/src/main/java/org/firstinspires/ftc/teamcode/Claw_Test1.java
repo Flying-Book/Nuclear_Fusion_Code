@@ -47,11 +47,11 @@ import com.qualcomm.robotcore.hardware.Servo;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name = "Concept: Anusha_Is_Awesome", group = "Concept")
+@TeleOp(name = "Concept: Claw_Prototype", group = "Concept")
 //@Disabled
 public class Claw_Test1 extends LinearOpMode {
 
-    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+    static final double INCREMENT   = 0.1;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
     static final double MAX_POS     =  1.0;     // Maximum rotational left_position
     static final double MIN_POS     =  0.0;     // Minimum rotational left_position
