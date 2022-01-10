@@ -63,6 +63,7 @@ public class NFMyRobot
     public DcMotor  motorBackLeft  = null;
     public DcMotor  motorBackRight  = null;
     public DcMotor  motorCarouselSpin  = null;
+    public DcMotor  motorArm  = null;
     //public DcMotor  robotArm     = null;
     public Servo    servo_1    = null;
     public Servo    servo_2   = null;
@@ -71,6 +72,7 @@ public class NFMyRobot
     public static final double MID_SERVO       =  0.5 ;
     public static final double ARM_UP_POWER    =  0.45 ;
     public static final double ARM_DOWN_POWER  = -0.45 ;
+
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;

@@ -171,7 +171,7 @@ public class AutoBlueCarouselWarehouse extends LinearOpMode {
             myEncoderDrive(Direction.FORWARD, 0.35, 8, 2000);
             myEncoderTurn(0.2, -10);
             myEncoderDrive(Direction.LEFT, 0.1, 2.75, 2000);
-            myEncoderDrive(Direction.FORWARD, 0.6                                                                             , 92.5, 10000);
+            myEncoderDrive(Direction.FORWARD, 0.6 , 92.5, 10000);
             myEncoderDrive(Direction.RIGHT, 0.6, 30, 5000);
             myEncoderDrive(Direction.FORWARD, 0.5, 12, 2000);
 

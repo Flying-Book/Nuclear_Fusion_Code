@@ -51,16 +51,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class Claw_Test1 extends LinearOpMode {
 
-    static final double INCREMENT   = 0.1;     // amount to slew servo each CYCLE_MS cycle
+    static final double INCREMENT   = 0.125;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational left_position
-    static final double MIN_POS     =  0.0;     // Minimum rotational left_position
+    static final double MAX_POS_LEFT =  1.0;     // Maximum rotational left_position
+    static final double MIN_POS_LEFT =  0.68;
+    static final double MIN_POS_RIGHT =  0.33;
+    static final double MAX_POS_RIGHT =  0.0;   // Minimum rotational left_position
+
 
     // Define class members
     Servo left_servo;
     Servo right_servo;
-    double  left_position = (MAX_POS - MIN_POS) / 2; // Start at halfway left_position
-    double  right_position = (MAX_POS - MIN_POS) / 2; // Start at halfway right_position
+    double  left_position = 0.75; // Start at halfway left_position
+    double  right_position = 0.25; // Start at halfway right_position
+//    double  left_position = (MAX_POS_LEFT - MAX_POS_RIGHT) / 2; // Start at halfway left_position
+//    double  right_position = (MAX_POS_LEFT - MAX_POS_RIGHT) / 2; // Start at halfway right_position
     //boolean rampUp = true;
     //boolean rampUp = this.gamepad1.left_trigger;
     float ltrigger;
@@ -105,30 +110,33 @@ public class Claw_Test1 extends LinearOpMode {
             // slew the servo, according to the rampUp (direction) variable.
             if (close) {
                 // Keep stepping up until we hit the max value.
-                left_position += INCREMENT ;
-                if (left_position >= MAX_POS ) {
-                    left_position = MAX_POS;
-                    //close = !close;   // Switch ramp direction
+                left_position += INCREMENT ; //
+                if (left_position >= MAX_POS_LEFT) {
+                    left_position = MAX_POS_LEFT;
+                    if (MIN_POS_LEFT == left_position) {
+                        close = false;
+                    }
+//                  close = false;   // Switch ramp direction
                 }
                 right_position -= INCREMENT ;
-                if (right_position <= MIN_POS ) {
-                    right_position = MIN_POS;
-                    //close = !close;   // Switch ramp direction
+                if (right_position <= MAX_POS_RIGHT) {
+                    right_position = MAX_POS_RIGHT;
+//                  close = !close;   // Switch ramp direction
                 }
-
 
             }
 
             if (release) {
                 // Keep stepping down until we hit the min value.
                 left_position -= INCREMENT ;
-                if (left_position <= MIN_POS ) {
-                    left_position = MIN_POS;
+                if (left_position <= MAX_POS_RIGHT) {
+                    left_position = MAX_POS_RIGHT;
+
                     //release = !release;  // Switch ramp direction
                 }
                 right_position += INCREMENT ;
-                if (right_position >= MAX_POS ) {
-                    right_position = MAX_POS;
+                if (right_position >= MAX_POS_LEFT) {
+                    right_position = MAX_POS_LEFT;
                     //close = !close;   // Switch ramp direction
                 }
             }

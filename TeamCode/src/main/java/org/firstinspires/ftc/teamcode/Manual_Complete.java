@@ -13,10 +13,10 @@ public class Manual_Complete extends LinearOpMode
     /* Declare OpMode members. */
     NFMyRobot robot   = new NFMyRobot();   // Use NF my Robot h/w
 
-    static final double INCREMENT   = 0.025;     // amount to slew servo each CYCLE_MS cycle
+    static final double INCREMENT   = 0.125;     // amount to slew servo each CYCLE_MS cycle
     static final int    CYCLE_MS    =   50;     // period of each cycle
-    static final double MAX_POS     =  1.0;     // Maximum rotational position
-    static final double MIN_POS     =  0.0;     // Minimum rotational position
+    static final double MAX_POS     =  1;     // Maximum rotational position
+    static final double MIN_POS     =  0;    // Minimum rotational position
 
     // Define class members
     Servo left_servo;
@@ -135,7 +135,7 @@ public class Manual_Complete extends LinearOpMode
                     left_position = MIN_POS;
                     //release = !release;  // Switch ramp direction
                 }
-                right_position += INCREMENT ;
+                right_position += INCREMENT;
                 if (right_position >= MAX_POS ) {
                     right_position = MAX_POS;
                     //close = !close;   // Switch ramp direction
