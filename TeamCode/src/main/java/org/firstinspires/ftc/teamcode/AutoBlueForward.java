@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 import org.firstinspires.ftc.teamcode.NFMyRobot;
@@ -93,11 +94,11 @@ public class AutoBlueForward extends LinearOpMode {
     static final double DRIVE_GEAR_REDUCTION = 1; //2.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 3.7;     // For figuring circumference
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-            (WHEEL_DIAMETER_INCHES * 3.1428);
+                                            (WHEEL_DIAMETER_INCHES * 3.1428);
     static final double COUNTS_FULL_TURN = 72;
     static final int ENCODER_COUNT_BEFORE_STOP = 140; //slow down before 3"
-
-    static TEST_MODE TEST_RUN_TYPE = TEST_MODE.WORKING1;
+    static final int ARM_FULL_TURN_CNT = 537;
+    static TEST_MODE TEST_RUN_TYPE = TEST_MODE.WORKING3;
 
     //static final double     DRIVE_SPEED             = 1;
     //static final double     TURN_SPEED              = 0.5;
@@ -133,12 +134,14 @@ public class AutoBlueForward extends LinearOpMode {
         robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Set Encoder
         robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -165,95 +168,75 @@ public class AutoBlueForward extends LinearOpMode {
         if (TEST_RUN_TYPE == TEST_MODE.WORKING1)
         {
             myEncoderDrive(Direction.RIGHT, 0.1, 1.5, 2000);
-            myEncoderTurn(0.2, 5);
+            myEncoderTurn(0.2, 6);
             myEncoderDrive(Direction.BACKWARD, 0.50, 22, 2000);
-            myEncoderDrive(Direction.BACKWARD, 0.35, 7, 2000);
-            spinCarousel(2000,500);
+            myEncoderDrive(Direction.BACKWARD, 0.25, 6, 2000);
+            spinCarousel(2500,0.50);
             myEncoderDrive(Direction.FORWARD, 0.35, 8, 2000);
-            myEncoderTurn(0.2, -10);
+            myEncoderTurn(0.2, -5);
             myEncoderDrive(Direction.RIGHT, 0.35, 29, 2000);
             myEncoderDrive(Direction.BACKWARD, 0.4, 12, 2000);
+        }
 
-        };
+        if (TEST_RUN_TYPE == TEST_MODE.WORKING2)
+        {
+            myEncoderDrive(Direction.RIGHT, 0.25, 6, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.50, 24, 2000);
+            myEncoderTurn(0.2, -45);
+            myEncoderDrive(Direction.RIGHT, 0.25, 10, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.15, 10, 850);
+            spinCarousel(2500,0.50);
+            myEncoderDrive(Direction.FORWARD, 0.25, 2, 2000);
+            myEncoderTurn(0.2, 45);
+            myEncoderDrive(Direction.RIGHT, 0.35, 22, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.25, 3, 2000);
+        }
 
-        sleep(100);     // pause for servos to move
+        if (TEST_RUN_TYPE == TEST_MODE.WORKING3)
+        {
+            myEncoderDrive(Direction.RIGHT, 0.35, 16, 2000);
+            myArmMove(0.15, 0.35, 2200);
+            myEncoderTurn(0.2, -67.5);
+            myEncoderDrive(Direction.FORWARD, 0.25, 12, 2000);
+            sleep(300);
+            //ARM Move and Claw Open:
+            robot.servo_1.setPosition(0.75);
+            robot.servo_2.setPosition(0.25);
+            sleep(350);
+            myEncoderDrive(Direction.BACKWARD, 0.50, 19.5, 2000);
+            myEncoderTurn(0.2, 67.5);
+            myEncoderDrive(Direction.BACKWARD, 0.50, 22, 2000);
+            robot.servo_1.setPosition(1);
+            robot.servo_2.setPosition(0);
+            myEncoderTurn(0.25, -45);
+            myEncoderDrive(Direction.RIGHT, 0.25, 8, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.15, 8, 870);
+            spinCarousel(2800,0.60);
+            myEncoderDrive(Direction.FORWARD, 0.25, 3, 2000);
+            myEncoderTurn(0.2, 45);
+            myEncoderDrive(Direction.RIGHT, 0.35, 20, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.25, 3, 2000);
+            myArmMove(0.15, -0.20, 1500);
+        }
 
+        // Set all Motors without Encoder for Manual Run.
+        robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //sleep(100);     // pause for servos to move
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
-    //currOrient = Current Orientation (rotation)
-    // x1 current x of robot; y1 current y of robot
-    // x2 new x of robot; y2 new y of robot (by new I mean targeted x and y)
-    // speed is just speed
-    public Direction moveRobot(double x1, double y1, double currOrient,
-                               double x2, double y2, double newOrient, double speed)
-    {
-        double angle;
-        double turn_angle;
-        Direction direction = Direction.FORWARD;
 
-        // angle will return Anti-clockwise value [-90, 90]
-        // Example A(-12,50), B(-60, 60). Angle<AB = atan2(60-50, -60-(-12)) = atan2(10,-48) = -11.77
-        // Example A(-36, 52), B(-60, 55) Angle = atan2(55-52, -60+36) = atan2(3,-24) = -7.13
-        angle = Math.toDegrees(Math.atan2((y2-y1), (x2-x1)));
-        //angle = Math.toDegrees(angle);
-
-        RobotLog.ii("NFAuto:moveRobot", "Input - Source (%f, %f, %f)" +
-                "Destination (%f, %f, %f), Angle: %f", x1, y1, currOrient, x2, y2,newOrient, angle);
-
-        turn_angle = angle - currOrient; // -7.13 + 90 = 82.87
-        // Start (-36, 52) Destination (-60, 55). Distance: sqrt((-60+36)^2 + (55-52)^2) = 24.2
-        distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
-
-        // Robot is now aline with line
-        myEncoderTurn(0.4, turn_angle);
-
-        // Decide the direction to move based on the target co-ordinate.
-        if(x1>x2) {
-            // Go backward to (x2,y2)
-            direction = Direction.BACKWARD;
-        } else if (x2>x1) {
-            // Go Forward to (x2, y2)
-            direction = Direction.FORWARD;
-        } else if (y1>y2) {
-            // Go Backward to (x2, y2)
-            direction = Direction.BACKWARD;
-        } else {
-            // Go Forward to (x2, y2)
-            direction = Direction.FORWARD;
-        }
-
-        myEncoderDrive(direction, speed, distance, 1000);
-        myEncoderTurn(speed, newOrient - angle);
-
-    /*
-        // Move 60+ degree Anti-CLOCKWISE
-        if (turn_angle < -180) {
-            turn_angle = turn_angle + 180;
-            myEncoderTurn(0.4, turn_angle);
-            myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
-            myEncoderTurn(0.4, newOrient - angle -180);
-        } else if(turn_angle > 180) {
-            turn_angle = turn_angle - 180;
-            myEncoderTurn(0.4, turn_angle);
-            myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
-            myEncoderTurn(0.4, newOrient - angle + 180);
-        } else {
-            myEncoderTurn(0.4, turn_angle);
-            // Move FWD
-            myEncoderDrive(Direction.FORWARD, 0.75, distance, 1000);
-            myEncoderTurn(0.4, newOrient - angle);
-        }
-    */
-        return direction;
-    }
-
-    // Run Carousel
-    public void spinCarousel(double timeout, long sleeptime)
+        // Run Carousel
+    public void spinCarousel(double timeout, double speed)
     {
         runtime.reset();
 
-        robot.motorCarouselSpin.setPower(0.8);
+        robot.motorCarouselSpin.setPower(speed);
         while (opModeIsActive() &&
                 runtime.milliseconds() < timeout)
         {
@@ -291,7 +274,34 @@ public class AutoBlueForward extends LinearOpMode {
         }
     }
 
-    public void myEncoderDrive(Direction direction, double speed, double Inches,
+    public void myArmMove(double speed, double rotation, double timeoutS) {   //SensorsToUse sensors_2_use)
+        int newArmPosition = 0;
+
+        // Reset Encoder beginning to see it gets better.
+        robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        newArmPosition = robot.motorArm.getCurrentPosition() + (int) (rotation * ARM_FULL_TURN_CNT);
+        // Set the Encoder to the target position.
+        robot.motorArm.setTargetPosition(newArmPosition);
+        // Turn On RUN_TO_POSITION
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Set power for the motors.
+        robot.motorArm.setPower(Math.abs(speed));
+        // reset the timeout time and start motion.
+        runtime.reset();
+
+        while (opModeIsActive() &&
+                (runtime.milliseconds() < timeoutS) &&
+                (robot.motorArm.isBusy()))
+        {
+            RobotLog.ii("NFusion", "Arm Current Pos: %7d, Target Pos: %7d",
+                    robot.motorArm.getCurrentPosition(), newArmPosition);
+        }
+
+        robot.motorArm.setPower(0);
+        sleep(50);
+    }
+        public void myEncoderDrive(Direction direction, double speed, double Inches,
                                double timeoutS) {   //SensorsToUse sensors_2_use)
         int newFrontLeftTarget = 0;
         int newFrontRightTarget = 0;
@@ -489,4 +499,72 @@ public class AutoBlueForward extends LinearOpMode {
 
         }
     }
+
+    //currOrient = Current Orientation (rotation)
+    // x1 current x of robot; y1 current y of robot
+    // x2 new x of robot; y2 new y of robot (by new I mean targeted x and y)
+    // speed is just speed
+    public Direction moveRobot(double x1, double y1, double currOrient,
+                               double x2, double y2, double newOrient, double speed)
+    {
+        double angle;
+        double turn_angle;
+        Direction direction = Direction.FORWARD;
+
+        // angle will return Anti-clockwise value [-90, 90]
+        // Example A(-12,50), B(-60, 60). Angle<AB = atan2(60-50, -60-(-12)) = atan2(10,-48) = -11.77
+        // Example A(-36, 52), B(-60, 55) Angle = atan2(55-52, -60+36) = atan2(3,-24) = -7.13
+        angle = Math.toDegrees(Math.atan2((y2-y1), (x2-x1)));
+        //angle = Math.toDegrees(angle);
+
+        RobotLog.ii("NFAuto:moveRobot", "Input - Source (%f, %f, %f)" +
+                "Destination (%f, %f, %f), Angle: %f", x1, y1, currOrient, x2, y2,newOrient, angle);
+
+        turn_angle = angle - currOrient; // -7.13 + 90 = 82.87
+        // Start (-36, 52) Destination (-60, 55). Distance: sqrt((-60+36)^2 + (55-52)^2) = 24.2
+        distance = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+
+        // Robot is now aline with line
+        myEncoderTurn(0.4, turn_angle);
+
+        // Decide the direction to move based on the target co-ordinate.
+        if(x1>x2) {
+            // Go backward to (x2,y2)
+            direction = Direction.BACKWARD;
+        } else if (x2>x1) {
+            // Go Forward to (x2, y2)
+            direction = Direction.FORWARD;
+        } else if (y1>y2) {
+            // Go Backward to (x2, y2)
+            direction = Direction.BACKWARD;
+        } else {
+            // Go Forward to (x2, y2)
+            direction = Direction.FORWARD;
+        }
+
+        myEncoderDrive(direction, speed, distance, 1000);
+        myEncoderTurn(speed, newOrient - angle);
+
+    /*
+        // Move 60+ degree Anti-CLOCKWISE
+        if (turn_angle < -180) {
+            turn_angle = turn_angle + 180;
+            myEncoderTurn(0.4, turn_angle);
+            myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
+            myEncoderTurn(0.4, newOrient - angle -180);
+        } else if(turn_angle > 180) {
+            turn_angle = turn_angle - 180;
+            myEncoderTurn(0.4, turn_angle);
+            myEncoderDrive(Direction.BACKWARD, 0.75, distance, 1000);
+            myEncoderTurn(0.4, newOrient - angle + 180);
+        } else {
+            myEncoderTurn(0.4, turn_angle);
+            // Move FWD
+            myEncoderDrive(Direction.FORWARD, 0.75, distance, 1000);
+            myEncoderTurn(0.4, newOrient - angle);
+        }
+    */
+        return direction;
+    }
+
 }

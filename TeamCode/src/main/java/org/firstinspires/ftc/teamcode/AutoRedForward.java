@@ -96,8 +96,9 @@ public class AutoRedForward extends LinearOpMode {
             (WHEEL_DIAMETER_INCHES * 3.1428);
     static final double COUNTS_FULL_TURN = 72;
     static final int ENCODER_COUNT_BEFORE_STOP = 140; //slow down before 3"
+    static final int ARM_FULL_TURN_CNT = 537;
 
-    static TEST_MODE TEST_RUN_TYPE = TEST_MODE.WORKING1;
+    static TEST_MODE TEST_RUN_TYPE = TEST_MODE.WORKING3;
 
     //static final double     DRIVE_SPEED             = 1;
     //static final double     TURN_SPEED              = 0.5;
@@ -133,12 +134,14 @@ public class AutoRedForward extends LinearOpMode {
         robot.motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Set Encoder
         robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         robot.motorBackLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         robot.motorBackRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -164,22 +167,98 @@ public class AutoRedForward extends LinearOpMode {
 
         if (TEST_RUN_TYPE == TEST_MODE.WORKING1)
         {
-            myEncoderDrive(Direction.LEFT, 0.1, 1.5, 2000);
-            myEncoderTurn(0.2, 5);
-            myEncoderDrive(Direction.BACKWARD, 0.50, 22, 2000);
-            myEncoderDrive(Direction.BACKWARD, 0.35, 10.5, 2000);
-            spinCarousel(2000,500);
+            myEncoderDrive(Direction.LEFT, 0.1, 4, 2000);
+            myEncoderTurn(0.2, 5.5);
+            myEncoderDrive(Direction.BACKWARD, 0.50, 25, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.20, 8, 2000);
+            spinCarousel(2500,0.50);
             myEncoderDrive(Direction.FORWARD, 0.35, 8, 2000);
-            myEncoderTurn(0.2, -10);
+            myEncoderTurn(0.2, -4);
             myEncoderDrive(Direction.LEFT, 0.35, 29, 2000);
-            myEncoderDrive(Direction.BACKWARD, 0.4, 12, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.4, 10, 2000);
 
-        };
+        }
 
-        sleep(100);     // pause for servos to move
+        if (TEST_RUN_TYPE == TEST_MODE.WORKING2)
+        {
+            myEncoderDrive(Direction.LEFT, 0.25, 6, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.50, 24, 2000);
+            myEncoderTurn(0.25, 50);
+            myEncoderDrive(Direction.LEFT, 0.25, 8, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.20, 8, 800);
+            spinCarousel(2500,-0.50);
+            myEncoderDrive(Direction.FORWARD, 0.35, 2, 2000);
+            myEncoderTurn(0.2, -50);
+            myEncoderDrive(Direction.LEFT, 0.35, 20, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.25, 3, 2000);
+        }
+
+        if (TEST_RUN_TYPE == TEST_MODE.WORKING3)
+        {
+            myEncoderDrive(Direction.LEFT, 0.35, 16, 2000);
+            myArmMove(0.15, 0.35, 2200);
+            myEncoderTurn(0.2, 68);
+            myEncoderDrive(Direction.FORWARD, 0.25, 11.5, 2000);
+            sleep(300);
+            //ARM Move and Claw Open:
+            robot.servo_1.setPosition(0.75);
+            robot.servo_2.setPosition(0.25);
+            sleep(350);
+            myEncoderDrive(Direction.BACKWARD, 0.30, 20, 2000);
+            myEncoderTurn(0.2, -68);
+            myEncoderDrive(Direction.BACKWARD, 0.50, 23, 2000);
+            robot.servo_1.setPosition(1);
+            robot.servo_2.setPosition(0);
+            myEncoderTurn(0.25, 60);
+            myEncoderDrive(Direction.LEFT, 0.25, 8, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.20, 9, 870);
+            spinCarousel(2800,-0.60);
+            myEncoderDrive(Direction.FORWARD, 0.35, 2, 2000);
+            myEncoderTurn(0.2, -60);
+            myEncoderDrive(Direction.LEFT, 0.35, 20, 2000);
+            myEncoderDrive(Direction.BACKWARD, 0.25, 3, 2000);
+            myArmMove(0.15, -0.20, 1500);
+        }
+        //sleep(100);     // pause for servos to move
+
+
+        // Set all Motors without Encoder for Manual Run.
+        robot.motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+    }
+
+    public void myArmMove(double speed, double rotation, double timeoutS) {   //SensorsToUse sensors_2_use)
+        int newArmPosition = 0;
+
+        // Reset Encoder beginning to see it gets better.
+        robot.motorArm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        newArmPosition = robot.motorArm.getCurrentPosition() + (int) (rotation * ARM_FULL_TURN_CNT);
+        // Set the Encoder to the target position.
+        robot.motorArm.setTargetPosition(newArmPosition);
+        // Turn On RUN_TO_POSITION
+        robot.motorArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // Set power for the motors.
+        robot.motorArm.setPower(Math.abs(speed));
+        // reset the timeout time and start motion.
+        runtime.reset();
+
+        while (opModeIsActive() &&
+                (runtime.milliseconds() < timeoutS) &&
+                (robot.motorArm.isBusy()))
+        {
+            RobotLog.ii("NFusion", "Arm Current Pos: %7d, Target Pos: %7d",
+                    robot.motorArm.getCurrentPosition(), newArmPosition);
+        }
+
+        robot.motorArm.setPower(0);
+        sleep(50);
     }
 
     public Direction moveRobot(double x1, double y1, double currOrient,
@@ -246,11 +325,11 @@ public class AutoRedForward extends LinearOpMode {
     }
 
     // Run Carousel
-    public void spinCarousel(double timeout, long sleeptime)
+    public void spinCarousel(double timeout, double speed)
     {
         runtime.reset();
 
-        robot.motorCarouselSpin.setPower(-0.8);
+        robot.motorCarouselSpin.setPower(speed);
         while (opModeIsActive() &&
                 runtime.milliseconds() < timeout)
         {
